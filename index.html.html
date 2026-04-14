@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Driver Site Audit — BioBlue Australia</title>
+
+<!-- Google Maps JS API -->
+<script>
+  window.MAPS_API_KEY = 'AIzaSyBb-EHe4hw-UmY9xFNRDMwbf-A27S2WbPQ';
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- html2canvas + jsPDF for PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+  :root {
+    --navy:    #0d1117;
+    --panel:   #161b24;
+    --card:    #1e2533;
+    --border:  #2a3347;
+    --amber:   #f5a623;
+    --amber-d: #c4831a;
+    --blue:    #3b82f6;
+    --green:   #22c55e;
+    --red:     #ef4444;
+    --text:    #e8eaf0;
+    --muted:   #7a8299;
+    --label:   #4a5568;
+    --mono:    'JetBrains Mono', monospace;
+    --display: 'Barlow Condensed', sans-serif;
+    --body:    'Barlow', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: var(--body);
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────── */
+  .app-header {
+    background: var(--panel);
+    border-bottom: 2px solid var(--amber);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-block { display: flex; flex-direction: column; }
+  .logo-brand {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.5;
+  }
+  .header-meta strong { color: var(--amber); }
+
+  /* ─── MAIN LAYOUT ─────────────────────────────────── */
+  .main { padding: 16px; max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
+
+  /* ─── SECTION CARD ────────────────────────────────── */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    background: rgba(245,166,35,0.12);
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 4px;
+    padding: 1px 6px;
+    letter-spacing: 0.08em;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .section-body { padding: 14px; }
+
+  /* ─── FORM FIELDS ─────────────────────────────────── */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .field-row.full { grid-template-columns: 1fr; }
+
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+
+  label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"], input[type="date"], input[type="time"], select, textarea {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 11px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--amber);
+    background: rgba(245,166,35,0.04);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  /* ─── GPS BUTTON ──────────────────────────────────── */
+  .gps-row { display: flex; gap: 8px; align-items: flex-end; }
+  .gps-row input { flex: 1; }
+  .btn-gps {
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.5);
+    border-radius: 5px;
+    color: var(--blue);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 9px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn-gps:active { background: rgba(59,130,246,0.3); }
+  .btn-gps.loading { opacity: 0.6; pointer-events: none; }
+
+  /* ─── YES/NO QUESTIONS ────────────────────────────── */
+  .yn-question { margin-bottom: 12px; }
+  .yn-label {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .yn-btns { display: flex; gap: 8px; }
+  .yn-btn {
+    flex: 1;
+    padding: 9px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--muted);
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .yn-btn.yes.active  { background: rgba(34,197,94,0.15);  border-color: var(--green); color: var(--green); }
+  .yn-btn.no.active   { background: rgba(239,68,68,0.15);   border-color: var(--red);   color: var(--red); }
+  .yn-btn:active { opacity: 0.7; }
+
+  /* ─── TANK DETAILS ────────────────────────────────── */
+  .tank-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* ─── MAP SECTION ─────────────────────────────────── */
+  .map-toolbar {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .btn-map {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  .btn-map:active { opacity: 0.7; }
+  .btn-map.active {
+    background: rgba(245,166,35,0.15);
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+  .btn-map.danger.active {
+    background: rgba(239,68,68,0.15);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  #map-container {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: #111;
+    cursor: crosshair;
+  }
+  /* On iPhone the map needs to be taller */
+  @media (max-height: 700px) {
+    #map-container { height: 320px; }
+  }
+
+  #map-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Arrow + marker overlay canvas */
+  #overlay-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .map-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(13,17,23,0.85);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    pointer-events: none;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+  }
+  .map-hint span { color: var(--amber); }
+
+  .map-legend {
+    padding: 10px 14px;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 20px; height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .map-notes-row {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── PHOTO SECTION ───────────────────────────────── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .photo-slot {
+    background: var(--panel);
+    border: 1.5px dashed var(--border);
+    border-radius: 6px;
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .photo-slot:hover { border-color: var(--amber); }
+  .photo-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo-slot .slot-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    padding: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .photo-slot .slot-icon {
+    font-size: 22px;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .photo-slot.has-photo .slot-label { display: none; }
+  .photo-slot.has-photo .slot-icon  { display: none; }
+  .photo-slot .remove-photo {
+    position: absolute;
+    top: 4px; right: 4px;
+    background: rgba(239,68,68,0.85);
+    border: none;
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    line-height: 1;
+  }
+  .photo-slot.has-photo .remove-photo { display: flex; }
+  input[type="file"] { display: none; }
+
+  /* ─── GENERATE PDF ────────────────────────────────── */
+  .btn-generate {
+    width: 100%;
+    background: var(--amber);
+    border: none;
+    border-radius: 8px;
+    color: #0d1117;
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .btn-generate:active { background: var(--amber-d); transform: scale(0.98); }
+  .btn-generate:disabled { opacity: 0.5; pointer-events: none; }
+
+  /* ─── GEOCODE STATUS ──────────────────────────────── */
+  .geocode-status {
+    font-family: var(--mono);
+    font-size: 11px;
+    margin-top: 5px;
+    min-height: 14px;
+  }
+  .geocode-status.ok  { color: var(--green); }
+  .geocode-status.err { color: var(--red); }
+  .geocode-status.loading { color: var(--muted); }
+
+  /* ─── ZOOM CONTROLS ───────────────────────────────── */
+  .zoom-controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 10;
+  }
+  .zoom-btn {
+    background: rgba(22,27,36,0.9);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    line-height: 1;
+    user-select: none;
+  }
+
+  /* ─── PDF OUTPUT ──────────────────────────────────── */
+  /* Hidden print-quality render target */
+  #pdf-render {
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 595px; /* A4 72dpi width */
+    background: #fff;
+    color: #111;
+    font-family: var(--body);
+    font-size: 11px;
+    padding: 0;
+    z-index: -1;
+  }
+  #pdf-render.rendering {
+    left: 0;
+    z-index: 9999;
+  }
+
+  /* ─── SPINNER ─────────────────────────────────────── */
+  .spinner-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,17,23,0.85);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .spinner-overlay.active { display: flex; }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner-text {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ─── SPINNER ─────────────────────────────────────── -->
+<div class="spinner-overlay" id="spinner">
+  <div class="spinner"></div>
+  <div class="spinner-text" id="spinner-text">GENERATING PDF…</div>
+</div>
+
+<!-- ─── HEADER ─────────────────────────────────────── -->
+<div class="app-header">
+  <div class="logo-block">
+    <span class="logo-brand">BIOBLUE</span>
+    <span class="logo-sub">Driver Site Audit</span>
+  </div>
+  <div class="header-meta">
+    <div><strong id="clock">--:--</strong></div>
+    <div id="today-date" style="font-size:10px;">---</div>
+  </div>
+</div>
+
+<!-- ─── MAIN ─────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- SECTION 1: SITE INFO -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">Site Information</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row full">
+        <div class="field-group">
+          <label>Customer / Site Name</label>
+          <input type="text" id="site-name" placeholder="e.g. Karratha Mining Hub">
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field-group">
+          <label>Site Address or Plus Code</label>
+          <div class="gps-row">
+            <input type="text" id="site-address" placeholder="e.g. 6Q4H+52 Karratha WA" id="site-address">
+            <button class="btn-gps" id="btn-gps" onclick="getGPS()">
+              <span>📍</span> GPS
+            </button>
+          </div>
+          <div class="geocode-status" id="geocode-status"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>Audit Date</label>
+          <input type="date" id="audit-date">
+        </div>
+        <div class="field-group">
+          <label>Audit Time</label>
+          <input type="time" id="audit-time">
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field-group">
+          <label>Driver Name</label>
+          <input type="text" id="driver-name" placeholder="Full name">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>BioBlue Contact</label>
+          <input type="text" id="bdm-name" value="Michael Hodnett" placeholder="BDM">
+        </div>
+        <div class="field-group">
+          <label>State</label>
+          <select id="state-select">
+            <option value="WA">WA</option>
+            <option value="SA">SA</option>
+            <option value="VIC">VIC</option>
+            <option value="NSW">NSW</option>
+            <option value="QLD">QLD</option>
+            <option value="NT">NT</option>
+            <option value="TAS">TAS</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: TANK DETAILS -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Tank & Equipment</span>
+    </div>
+    <div class="section-body">
+      <div class="tank-grid">
+        <div class="field-group">
+          <label>Tank Size (Litres)</label>
+          <input type="text" id="tank-size" placeholder="e.g. 5000L">
+        </div>
+        <div class="field-group">
+          <label>Tank Type</label>
+          <select id="tank-type">
+            <option value="">-- Select --</option>
+            <option>Bulk Polyethylene</option>
+            <option>IBC 1000L</option>
+            <option>Bladder Tank</option>
+            <option>Customer-owned</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Pump / Dispenser</label>
+          <select id="pump-type">
+            <option value="">-- Select --</option>
+            <option>Smartfill GEN III FMS</option>
+            <option>Standard pump</option>
+            <option>Gravity feed</option>
+            <option>Customer pump</option>
+            <option>None</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Current Level</label>
+          <input type="text" id="tank-level" placeholder="e.g. ~70%">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: SITE CHECKLIST -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Site Checklist</span>
+    </div>
+    <div class="section-body" id="checklist-body">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+  <!-- SECTION 4: MAP -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">Site Map &amp; Access</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="map-toolbar">
+      <button class="btn-map" id="tool-entry" onclick="setTool('entry')" title="Draw entry arrow">
+        🟢 Entry
+      </button>
+      <button class="btn-map" id="tool-exit" onclick="setTool('exit')" title="Draw exit arrow">
+        🔴 Exit
+      </button>
+      <button class="btn-map" id="tool-tank" onclick="setTool('tank')" title="Mark tank position">
+        🔵 Tank
+      </button>
+      <button class="btn-map" id="tool-note" onclick="setTool('note')" title="Add text note">
+        📝 Note
+      </button>
+      <button class="btn-map danger" id="tool-erase" onclick="clearAnnotations()">
+        🗑 Clear
+      </button>
+    </div>
+
+    <!-- Map -->
+    <div id="map-container">
+      <canvas id="map-canvas"></canvas>
+      <canvas id="overlay-canvas"></canvas>
+
+      <!-- Zoom controls -->
+      <div class="zoom-controls">
+        <div class="zoom-btn" onclick="zoomMap(1)" title="Zoom in">+</div>
+        <div class="zoom-btn" onclick="zoomMap(-1)" title="Zoom out">−</div>
+      </div>
+
+      <!-- Hint bar -->
+      <div class="map-hint" id="map-hint">
+        Tap <span>Entry / Exit / Tank</span> then tap map to place
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="map-legend">
+      <div class="legend-item">
+        <div class="legend-line" style="background:var(--green)"></div> Entry
+      </div>
+      <div class="legend-item">
+        <div class="legend-line" style="background:var(--red)"></div> Exit
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--blue)"></div> Tank
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--amber)"></div> Note
+      </div>
+    </div>
+
+    <!-- Map notes -->
+    <div class="map-notes-row">
+      <div class="field-group">
+        <label>Access / Map Notes</label>
+        <textarea id="map-notes" placeholder="e.g. Enter via north gate, tank is left of weighbridge, reverse in from east side…" rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: PHOTOS -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">Site Photos</span>
+    </div>
+    <div class="section-body">
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: NOTES -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">General Notes</span>
+    </div>
+    <div class="section-body">
+      <textarea id="general-notes" placeholder="Any additional notes for future drivers visiting this site…" rows="4"></textarea>
+    </div>
+  </div>
+
+  <!-- GENERATE PDF -->
+  <button class="btn-generate" id="btn-pdf" onclick="generatePDF()">
+    ⬇ Generate Site Report PDF
+  </button>
+
+</div><!-- /main -->
+
+<!-- Hidden PDF render target -->
+<div id="pdf-render"></div>
+
+<!-- ─── SCRIPTS ─────────────────────────────────────── -->
+<script>
+
+/* ══════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════ */
+const MAPS_KEY = window.MAPS_API_KEY;
+
+const PHOTO_LABELS = [
+  'Site Entry / Gate',
+  'Tank & Pump',
+  'Delivery Access',
+  'Other'
+];
+
+const CHECKLIST_QUESTIONS = [
+  { id: 'q1', text: 'Site is accessible by a rigid tanker (8m+)?' },
+  { id: 'q2', text: 'Gate / boom gate code available or gate is open?' },
+  { id: 'q3', text: 'Tank is clearly signposted and visible?' },
+  { id: 'q4', text: 'Adequate space to reverse / turn around on site?' },
+  { id: 'q5', text: 'Overfill protection / bunded area in place?' },
+  { id: 'q6', text: 'Pump / hose in good working condition?' },
+  { id: 'q7', text: 'Site contact available during delivery window?' },
+];
+
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+let mapState = {
+  lat: -25.2744,
+  lng: 133.7751,
+  zoom: 17,
+  loaded: false,
+  geocoder: null,
+  annotations: [],   // { type, lat, lng, label? }
+  activeTool: null,
+  dragging: false,
+  dragStart: null,
+  arrowStart: null,  // for two-tap arrow mode
+};
+
+let photos = [null, null, null, null];
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initClock();
+  initDates();
+  buildChecklist();
+  buildPhotoGrid();
+  loadMapsAPI();
+});
+
+function initClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString('en-AU', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('today-date').textContent =
+      now.toLocaleDateString('en-AU', {day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+function initDates() {
+  const now = new Date();
+  document.getElementById('audit-date').value = now.toISOString().split('T')[0];
+  document.getElementById('audit-time').value =
+    now.getHours().toString().padStart(2,'0') + ':' +
+    now.getMinutes().toString().padStart(2,'0');
+}
+
+function buildChecklist() {
+  const body = document.getElementById('checklist-body');
+  CHECKLIST_QUESTIONS.forEach(q => {
+    const div = document.createElement('div');
+    div.className = 'yn-question';
+    div.innerHTML = `
+      <div class="yn-label">${q.text}</div>
+      <div class="yn-btns">
+        <button class="yn-btn yes" data-id="${q.id}" data-val="YES" onclick="setYN(this)">YES</button>
+        <button class="yn-btn no"  data-id="${q.id}" data-val="NO"  onclick="setYN(this)">NO</button>
+      </div>`;
+    body.appendChild(div);
+  });
+}
+
+function setYN(btn) {
+  const id = btn.dataset.id;
+  document.querySelectorAll(`.yn-btn[data-id="${id}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function buildPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  PHOTO_LABELS.forEach((label, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'photo-slot';
+    slot.id = `photo-slot-${i}`;
+    slot.innerHTML = `
+      <div class="slot-icon">📷</div>
+      <div class="slot-label">${label}</div>
+      <img id="photo-img-${i}" style="display:none">
+      <button class="remove-photo" onclick="removePhoto(event,${i})">×</button>
+      <input type="file" id="photo-input-${i}" accept="image/*" capture="environment"
+        onchange="handlePhoto(event,${i})">`;
+    slot.addEventListener('click', (e) => {
+      if (e.target.classList.contains('remove-photo')) return;
+      document.getElementById(`photo-input-${i}`).click();
+    });
+    grid.appendChild(slot);
+  });
+}
+
+function handlePhoto(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    photos[index] = e.target.result;
+    const slot = document.getElementById(`photo-slot-${index}`);
+    const img  = document.getElementById(`photo-img-${index}`);
+    img.src = e.target.result;
+    img.style.display = 'block';
+    slot.classList.add('has-photo');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(event, index) {
+  event.stopPropagation();
+  photos[index] = null;
+  const slot = document.getElementById(`photo-slot-${index}`);
+  const img  = document.getElementById(`photo-img-${index}`);
+  img.src = '';
+  img.style.display = 'none';
+  slot.classList.remove('has-photo');
+  document.getElementById(`photo-input-${index}`).value = '';
+}
+
+/* ══════════════════════════════════════════════
+   GOOGLE MAPS
+══════════════════════════════════════════════ */
+function loadMapsAPI() {
+  window.initMaps = initMaps;
+  const script = document.createElement('script');
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_KEY}&libraries=places&callback=initMaps`;
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+}
+
+function initMaps() {
+  mapState.geocoder = new google.maps.Geocoder();
+  mapState.loaded = true;
+
+  // Try to get user's current location as default
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      mapState.lat = pos.coords.latitude;
+      mapState.lng = pos.coords.longitude;
+      renderTiles();
+    }, () => renderTiles());
+  } else {
+    renderTiles();
+  }
+
+  // Wire up address field for auto-geocode
+  document.getElementById('site-address').addEventListener('change', geocodeAddress);
+
+  // Map interaction
+  setupMapInteraction();
+}
+
+/* ──────────────────────────────────────────────
+   TILE RENDERING (pure canvas, no Maps JS map)
+   We render Google satellite tiles manually so
+   we have full pixel control for the overlay.
+────────────────────────────────────────────── */
+function tileCoords(lat, lng, zoom) {
+  const n = Math.pow(2, zoom);
+  const x = Math.floor((lng + 180) / 360 * n);
+  const latRad = lat * Math.PI / 180;
+  const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n);
+  return { x, y };
+}
+
+function latLngToPixel(lat, lng, centerLat, centerLng, zoom, canvasW, canvasH) {
+  const scale = Math.pow(2, zoom);
+  const TILE = 256;
+  function project(lat, lng) {
+    const sinLat = Math.sin(lat * Math.PI / 180);
+    const x = (lng + 180) / 360 * scale * TILE;
+    const y = (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * scale * TILE;
+    return { x, y };
+  }
+  const center = project(centerLat, centerLng);
+  const point  = project(lat, lng);
+  return {
+    x: canvasW / 2 + (point.x - center.x),
+    y: canvasH / 2 + (point.y - center.y)
+  };
+}
+
+function pixelToLatLng(px, py, centerLat, centerLng, zoom, canvasW, canvasH) {
+  const scale = Math.pow(2, zoom);
+  const TILE = 256;
+  const sinLat = Math.sin(centerLat * Math.PI / 180);
+  const cx = (centerLng + 180) / 360 * scale * TILE;
+  const cy = (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * scale * TILE;
+  const worldX = cx + (px - canvasW / 2);
+  const worldY = cy + (py - canvasH / 2);
+  const lng = worldX / (scale * TILE) * 360 - 180;
+  const n = Math.PI - 2 * Math.PI * worldY / (scale * TILE);
+  const lat = 180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)));
+  return { lat, lng };
+}
+
+let tileCache = {};
+
+function renderTiles() {
+  const container = document.getElementById('map-container');
+  const canvas = document.getElementById('map-canvas');
+  const W = container.clientWidth;
+  const H = container.clientHeight;
+  canvas.width = W;
+  canvas.height = H;
+  document.getElementById('overlay-canvas').width = W;
+  document.getElementById('overlay-canvas').height = H;
+
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1a1f2e';
+  ctx.fillRect(0, 0, W, H);
+
+  const zoom = mapState.zoom;
+  const TILE = 256;
+  const center = tileCoords(mapState.lat, mapState.lng, zoom);
+
+  // Work out pixel offset from center tile to canvas centre
+  const scale = Math.pow(2, zoom);
+  function worldX(lng) { return (lng + 180) / 360 * scale * TILE; }
+  function worldY(lat) {
+    const sinLat = Math.sin(lat * Math.PI / 180);
+    return (0.5 - Math.log((1 + sinLat) / (1 - sinLat)) / (4 * Math.PI)) * scale * TILE;
+  }
+  const centerWX = worldX(mapState.lng);
+  const centerWY = worldY(mapState.lat);
+
+  // How many tiles either side
+  const tilesX = Math.ceil(W / TILE) + 2;
+  const tilesY = Math.ceil(H / TILE) + 2;
+
+  const startTX = center.x - Math.floor(tilesX / 2);
+  const startTY = center.y - Math.floor(tilesY / 2);
+
+  // Server cycling for load balancing
+  const servers = ['mt0','mt1','mt2','mt3'];
+
+  for (let tx = startTX; tx <= startTX + tilesX; tx++) {
+    for (let ty = startTY; ty <= startTY + tilesY; ty++) {
+      const tileWX = tx * TILE;
+      const tileWY = ty * TILE;
+      const drawX = Math.round(W / 2 + tileWX - centerWX);
+      const drawY = Math.round(H / 2 + tileWY - centerWY);
+
+      const cacheKey = `${zoom}/${tx}/${ty}`;
+      const server = servers[(tx + ty) % 4];
+      const url = `https://${server}.google.com/vt/lyrs=s&x=${tx}&y=${ty}&z=${zoom}`;
+
+      if (tileCache[cacheKey]) {
+        ctx.drawImage(tileCache[cacheKey], drawX, drawY, TILE, TILE);
+      } else {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          tileCache[cacheKey] = img;
+          ctx.drawImage(img, drawX, drawY, TILE, TILE);
+          renderOverlay();
+        };
+        img.onerror = () => {};
+        img.src = url;
+      }
+    }
+  }
+
+  setTimeout(renderOverlay, 100);
+}
+
+/* ──────────────────────────────────────────────
+   OVERLAY — arrows, markers, labels
+────────────────────────────────────────────── */
+function renderOverlay() {
+  const canvas = document.getElementById('overlay-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  mapState.annotations.forEach(ann => {
+    if (ann.type === 'entry' || ann.type === 'exit') {
+      if (!ann.fromLat) return; // needs two points
+      const from = latLngToPixel(ann.fromLat, ann.fromLng, mapState.lat, mapState.lng, mapState.zoom, W, H);
+      const to   = latLngToPixel(ann.lat,     ann.lng,     mapState.lat, mapState.lng, mapState.zoom, W, H);
+      drawArrow(ctx, from.x, from.y, to.x, to.y,
+        ann.type === 'entry' ? '#22c55e' : '#ef4444', 5, 18, 10);
+    } else if (ann.type === 'tank') {
+      const p = latLngToPixel(ann.lat, ann.lng, mapState.lat, mapState.lng, mapState.zoom, W, H);
+      drawTankMarker(ctx, p.x, p.y);
+    } else if (ann.type === 'note') {
+      const p = latLngToPixel(ann.lat, ann.lng, mapState.lat, mapState.lng, mapState.zoom, W, H);
+      drawNoteMarker(ctx, p.x, p.y, ann.label || 'Note');
+    }
+  });
+
+  // Crosshair at center
+  ctx.strokeStyle = 'rgba(245,166,35,0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(W/2, H/2 - 12); ctx.lineTo(W/2, H/2 + 12);
+  ctx.moveTo(W/2 - 12, H/2); ctx.lineTo(W/2 + 12, H/2);
+  ctx.stroke();
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color, lineWidth, headLen, headAngle) {
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  const aRad = (headAngle || 30) * Math.PI / 180;
+
+  // Shadow
+  ctx.shadowColor = 'rgba(0,0,0,0.6)';
+  ctx.shadowBlur = 6;
+
+  ctx.strokeStyle = color;
+  ctx.fillStyle   = color;
+  ctx.lineWidth   = lineWidth;
+  ctx.lineCap     = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+  // Arrowhead
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - aRad), y2 - headLen * Math.sin(angle - aRad));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + aRad), y2 - headLen * Math.sin(angle + aRad));
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+}
+
+function drawTankMarker(ctx, x, y) {
+  ctx.shadowColor = 'rgba(0,0,0,0.7)';
+  ctx.shadowBlur = 8;
+
+  // Outer ring
+  ctx.beginPath();
+  ctx.arc(x, y, 14, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(59,130,246,0.25)';
+  ctx.fill();
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Inner dot
+  ctx.beginPath();
+  ctx.arc(x, y, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#3b82f6';
+  ctx.fill();
+
+  // Label
+  ctx.shadowBlur = 0;
+  ctx.font = 'bold 10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+  ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+  ctx.lineWidth = 3;
+  ctx.strokeText('TANK', x, y + 25);
+  ctx.fillText('TANK', x, y + 25);
+}
+
+function drawNoteMarker(ctx, x, y, label) {
+  ctx.shadowColor = 'rgba(0,0,0,0.7)';
+  ctx.shadowBlur = 6;
+
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(245,166,35,0.85)';
+  ctx.fill();
+
+  ctx.shadowBlur = 0;
+  ctx.font = 'bold 10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#0d1117';
+  ctx.fillText('!', x, y + 4);
+
+  // Label
+  const maxW = 80;
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillStyle = '#fff';
+  ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+  ctx.lineWidth = 3;
+  const shortLabel = label.length > 12 ? label.slice(0,12)+'…' : label;
+  ctx.strokeText(shortLabel, x, y + 22);
+  ctx.fillText(shortLabel, x, y + 22);
+}
+
+/* ──────────────────────────────────────────────
+   MAP INTERACTION
+────────────────────────────────────────────── */
+function setupMapInteraction() {
+  const container = document.getElementById('map-container');
+  let isPanning = false;
+  let panStart = null;
+  let panStartLatLng = null;
+  let touchStartDist = null;
+  let touchStartZoom = null;
+  let lastTouchTime = 0;
+  let holdTimeout = null;
+
+  // Pointer / mouse — panning + tap annotation
+  container.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    isPanning = true;
+    panStart = { x: e.clientX, y: e.clientY };
+    panStartLatLng = { lat: mapState.lat, lng: mapState.lng };
+  }, { passive: false });
+
+  container.addEventListener('pointermove', (e) => {
+    if (!isPanning) return;
+    const dx = e.clientX - panStart.x;
+    const dy = e.clientY - panStart.y;
+
+    // Pan the map
+    const W = container.clientWidth;
+    const H = container.clientHeight;
+    const TILE = 256;
+    const scale = Math.pow(2, mapState.zoom);
+    const lngPerPx = 360 / (scale * TILE);
+    const latPerPx = (panStartLatLng.lat) => {
+      const rad = panStartLatLng.lat * Math.PI / 180;
+      return (360 / (scale * TILE)) / Math.cos(rad);
+    };
+    mapState.lng = panStartLatLng.lng - dx * lngPerPx;
+    const latRad = panStartLatLng.lat * Math.PI / 180;
+    const metersPerPx = 156543.03392 * Math.cos(latRad) / scale;
+    // Approximate lat from dy
+    mapState.lat = panStartLatLng.lat + dy * (180 / Math.PI) / (6378137) * (TILE * scale / 256);
+
+    // Quick redraw during pan (just move canvas)
+    document.getElementById('map-canvas').style.transform =
+      `translate(${dx}px, ${dy}px)`;
+    renderOverlay();
+  }, { passive: true });
+
+  container.addEventListener('pointerup', (e) => {
+    if (!isPanning) return;
+    isPanning = false;
+
+    const dx = e.clientX - panStart.x;
+    const dy = e.clientY - panStart.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Reset canvas transform
+    document.getElementById('map-canvas').style.transform = '';
+
+    if (dist > 8) {
+      // It was a pan — commit and re-render
+      renderTiles();
+    } else {
+      // It was a tap — place annotation
+      handleMapTap(e.clientX, e.clientY);
+    }
+  });
+
+  // Touch pinch-to-zoom
+  container.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      touchStartDist = getTouchDist(e);
+      touchStartZoom = mapState.zoom;
+      isPanning = false; // cancel pan during pinch
+    }
+  }, { passive: true });
+
+  container.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const d = getTouchDist(e);
+      const ratio = d / touchStartDist;
+      const newZoom = Math.min(21, Math.max(12, touchStartZoom + Math.log2(ratio)));
+      mapState.zoom = Math.round(newZoom);
+      renderTiles();
+    }
+  }, { passive: false });
+}
+
+function getTouchDist(e) {
+  const dx = e.touches[0].clientX - e.touches[1].clientX;
+  const dy = e.touches[0].clientY - e.touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+/* ──────────────────────────────────────────────
+   ANNOTATION TOOL
+────────────────────────────────────────────── */
+let pendingArrowStart = null; // for entry/exit two-tap mode
+
+function setTool(tool) {
+  mapState.activeTool = tool;
+  pendingArrowStart = null;
+
+  // Update button states
+  ['entry','exit','tank','note'].forEach(t => {
+    const btn = document.getElementById(`tool-${t}`);
+    if (btn) btn.classList.toggle('active', t === tool);
+  });
+
+  // Update hint
+  const hints = {
+    entry: 'Tap start then end point to draw <span>Entry arrow</span>',
+    exit:  'Tap start then end point to draw <span>Exit arrow</span>',
+    tank:  'Tap to place the <span>Tank marker</span>',
+    note:  'Tap to add a <span>Note marker</span>',
+  };
+  document.getElementById('map-hint').innerHTML =
+    hints[tool] || 'Tap <span>Entry / Exit / Tank</span> then tap map to place';
+}
+
+function handleMapTap(clientX, clientY) {
+  if (!mapState.activeTool) return;
+  const container = document.getElementById('map-container');
+  const rect = container.getBoundingClientRect();
+  const px = clientX - rect.left;
+  const py = clientY - rect.top;
+  const W = container.clientWidth;
+  const H = container.clientHeight;
+
+  const { lat, lng } = pixelToLatLng(px, py, mapState.lat, mapState.lng, mapState.zoom, W, H);
+
+  const tool = mapState.activeTool;
+
+  if (tool === 'entry' || tool === 'exit') {
+    if (!pendingArrowStart) {
+      pendingArrowStart = { lat, lng };
+      document.getElementById('map-hint').innerHTML =
+        `Now tap <span>end point</span> for the ${tool} arrow`;
+    } else {
+      mapState.annotations.push({
+        type: tool,
+        fromLat: pendingArrowStart.lat,
+        fromLng: pendingArrowStart.lng,
+        lat, lng
+      });
+      pendingArrowStart = null;
+      renderOverlay();
+    }
+  } else if (tool === 'tank') {
+    // Only one tank marker — replace existing
+    mapState.annotations = mapState.annotations.filter(a => a.type !== 'tank');
+    mapState.annotations.push({ type: 'tank', lat, lng });
+    renderOverlay();
+  } else if (tool === 'note') {
+    const label = prompt('Enter note label (short):') || 'Note';
+    mapState.annotations.push({ type: 'note', lat, lng, label });
+    renderOverlay();
+  }
+}
+
+function clearAnnotations() {
+  if (!confirm('Clear all map annotations?')) return;
+  mapState.annotations = [];
+  pendingArrowStart = null;
+  renderOverlay();
+}
+
+function zoomMap(delta) {
+  mapState.zoom = Math.min(21, Math.max(12, mapState.zoom + delta));
+  tileCache = {}; // clear cache on zoom change
+  renderTiles();
+}
+
+/* ══════════════════════════════════════════════
+   GEOCODING
+══════════════════════════════════════════════ */
+function geocodeAddress() {
+  const addr = document.getElementById('site-address').value.trim();
+  if (!addr || !mapState.geocoder) return;
+
+  const status = document.getElementById('geocode-status');
+  status.className = 'geocode-status loading';
+  status.textContent = 'Locating…';
+
+  mapState.geocoder.geocode({ address: addr, region: 'AU' }, (results, geoStatus) => {
+    if (geoStatus === 'OK' && results[0]) {
+      const loc = results[0].geometry.location;
+      mapState.lat = loc.lat();
+      mapState.lng = loc.lng();
+      mapState.zoom = 19;
+      tileCache = {};
+      renderTiles();
+      status.className = 'geocode-status ok';
+      status.textContent = '✓ ' + results[0].formatted_address;
+    } else {
+      status.className = 'geocode-status err';
+      status.textContent = '⚠ Could not locate address';
+    }
+  });
+}
+
+function getGPS() {
+  const btn = document.getElementById('btn-gps');
+  const status = document.getElementById('geocode-status');
+
+  if (!navigator.geolocation) {
+    status.className = 'geocode-status err';
+    status.textContent = 'GPS not supported on this device';
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Locating…';
+  status.className = 'geocode-status loading';
+  status.textContent = 'Getting GPS position…';
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      mapState.lat = lat;
+      mapState.lng = lng;
+      mapState.zoom = 19;
+      tileCache = {};
+      renderTiles();
+
+      // Reverse geocode
+      if (mapState.geocoder) {
+        mapState.geocoder.geocode({ location: { lat, lng } }, (results, geoStatus) => {
+          if (geoStatus === 'OK' && results[0]) {
+            document.getElementById('site-address').value = results[0].formatted_address;
+            status.className = 'geocode-status ok';
+            status.textContent = '✓ GPS position confirmed';
+          } else {
+            document.getElementById('site-address').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            status.className = 'geocode-status ok';
+            status.textContent = `✓ GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          }
+        });
+      } else {
+        document.getElementById('site-address').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        status.className = 'geocode-status ok';
+        status.textContent = '✓ GPS captured';
+      }
+
+      btn.classList.remove('loading');
+      btn.innerHTML = '<span>📍</span> GPS';
+    },
+    (err) => {
+      status.className = 'geocode-status err';
+      status.textContent = '⚠ GPS error: ' + err.message;
+      btn.classList.remove('loading');
+      btn.innerHTML = '<span>📍</span> GPS';
+    },
+    { enableHighAccuracy: true, timeout: 15000 }
+  );
+}
+
+/* ══════════════════════════════════════════════
+   PDF GENERATION
+══════════════════════════════════════════════ */
+async function generatePDF() {
+  const btn = document.getElementById('btn-pdf');
+  btn.disabled = true;
+  showSpinner('CAPTURING MAP…');
+
+  try {
+    // 1. Capture map canvas at full res
+    const mapContainer = document.getElementById('map-container');
+    const mapCanvas    = document.getElementById('map-canvas');
+    const overlayCanvas= document.getElementById('overlay-canvas');
+
+    // Composite map + overlay into one canvas
+    const composite = document.createElement('canvas');
+    composite.width  = mapCanvas.width;
+    composite.height = mapCanvas.height;
+    const ctx = composite.getContext('2d');
+    ctx.drawImage(mapCanvas, 0, 0);
+    ctx.drawImage(overlayCanvas, 0, 0);
+    const mapImage = composite.toDataURL('image/jpeg', 0.92);
+
+    showSpinner('BUILDING REPORT…');
+
+    // 2. Collect form data
+    const data = collectData();
+
+    // 3. Build PDF using jsPDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const PW = 210; // page width mm
+    const PH = 297;
+    const M  = 14;  // margin
+    const CW = PW - 2 * M; // content width
+
+    let y = M;
+
+    // ── Header bar
+    doc.setFillColor(13, 17, 23);
+    doc.rect(0, 0, PW, 22, 'F');
+    doc.setFillColor(245, 166, 35);
+    doc.rect(0, 20, PW, 2, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(245, 166, 35);
+    doc.text('BIOBLUE AUSTRALIA', M, 13);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(180, 180, 180);
+    doc.text('DRIVER SITE AUDIT REPORT', M, 18);
+    doc.setTextColor(180, 180, 180);
+    doc.text(`Generated: ${new Date().toLocaleString('en-AU')}`, PW - M, 13, { align: 'right' });
+    doc.text('BioBlue Australia Pty Ltd  |  bioblue.com.au', PW - M, 18, { align: 'right' });
+
+    y = 30;
+
+    // ── Section: Site Info
+    y = pdfSectionHeader(doc, 'SITE INFORMATION', y, M, CW);
+
+    const infoRows = [
+      ['Customer / Site', data.siteName || '—'],
+      ['Address',         data.address  || '—'],
+      ['Audit Date',      data.date     || '—'],
+      ['Audit Time',      data.time     || '—'],
+      ['Driver',          data.driver   || '—'],
+      ['BioBlue Contact', data.bdm      || '—'],
+      ['State',           data.state    || '—'],
+    ];
+    y = pdfTwoColTable(doc, infoRows, y, M, CW);
+
+    // ── Section: Tank
+    y = pdfSectionHeader(doc, 'TANK & EQUIPMENT', y, M, CW);
+    const tankRows = [
+      ['Tank Size',    data.tankSize  || '—'],
+      ['Tank Type',    data.tankType  || '—'],
+      ['Pump',         data.pump      || '—'],
+      ['Current Level',data.level     || '—'],
+    ];
+    y = pdfTwoColTable(doc, tankRows, y, M, CW);
+
+    // ── Section: Checklist
+    y = pdfSectionHeader(doc, 'SITE CHECKLIST', y, M, CW);
+    data.checklist.forEach(item => {
+      if (y > PH - 30) { doc.addPage(); y = M; }
+      const ansColor = item.answer === 'YES' ? [34,197,94] :
+                       item.answer === 'NO'  ? [239,68,68] : [160,160,160];
+      doc.setFillColor(...ansColor);
+      doc.rect(M, y, 2.5, 5, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
+      const wrapped = doc.splitTextToSize(item.text, CW - 30);
+      doc.text(wrapped, M + 5, y + 4);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...ansColor);
+      doc.text(item.answer || '—', M + CW - 5, y + 4, { align: 'right' });
+      y += 7 + (wrapped.length - 1) * 4;
+    });
+
+    // ── Section: Map
+    if (y > PH - 90) { doc.addPage(); y = M; }
+    y = pdfSectionHeader(doc, 'SITE MAP & ACCESS', y, M, CW);
+
+    // Map image — full width, 16:9-ish ratio
+    const mapH = CW * (mapCanvas.height / mapCanvas.width);
+    const mapHcapped = Math.min(mapH, 90);
+    doc.addImage(mapImage, 'JPEG', M, y, CW, mapHcapped);
+    y += mapHcapped + 3;
+
+    // Map legend
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(34,197,94);  doc.text('■ Entry Arrow', M, y);
+    doc.setTextColor(239,68,68);  doc.text('■ Exit Arrow', M + 28, y);
+    doc.setTextColor(59,130,246); doc.text('● Tank Position', M + 54, y);
+    doc.setTextColor(245,166,35); doc.text('● Note Marker', M + 86, y);
+    y += 5;
+
+    if (data.mapNotes) {
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8.5);
+      doc.setTextColor(60, 60, 60);
+      const noteLines = doc.splitTextToSize('Access Notes: ' + data.mapNotes, CW);
+      doc.text(noteLines, M, y);
+      y += noteLines.length * 4 + 3;
+    }
+
+    // ── Section: Photos
+    const hasPhotos = photos.some(p => p !== null);
+    if (hasPhotos) {
+      if (y > PH - 60) { doc.addPage(); y = M; }
+      y = pdfSectionHeader(doc, 'SITE PHOTOS', y, M, CW);
+
+      const photoW = (CW - 6) / 2;
+      const photoH = photoW * 0.75;
+      let px2 = M, py2 = y;
+      let col = 0;
+
+      for (let i = 0; i < 4; i++) {
+        if (photos[i]) {
+          if (py2 + photoH > PH - M) { doc.addPage(); py2 = M; }
+          doc.addImage(photos[i], 'JPEG', px2, py2, photoW, photoH);
+          // Caption
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(7);
+          doc.setTextColor(80,80,80);
+          doc.text(PHOTO_LABELS[i], px2 + photoW / 2, py2 + photoH + 3, { align: 'center' });
+          col++;
+          if (col % 2 === 0) {
+            px2 = M;
+            py2 += photoH + 8;
+          } else {
+            px2 = M + photoW + 6;
+          }
+        }
+      }
+      y = py2 + photoH + 10;
+    }
+
+    // ── Section: Notes
+    if (data.notes) {
+      if (y > PH - 40) { doc.addPage(); y = M; }
+      y = pdfSectionHeader(doc, 'GENERAL NOTES', y, M, CW);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(40,40,40);
+      const noteLines2 = doc.splitTextToSize(data.notes, CW);
+      doc.text(noteLines2, M, y);
+      y += noteLines2.length * 4 + 4;
+    }
+
+    // ── Footer on all pages
+    const pageCount = doc.getNumberOfPages();
+    for (let p = 1; p <= pageCount; p++) {
+      doc.setPage(p);
+      doc.setFillColor(230,230,230);
+      doc.rect(0, PH - 8, PW, 8, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7);
+      doc.setTextColor(100,100,100);
+      doc.text('BioBlue Australia Pty Ltd — Confidential', M, PH - 3);
+      doc.text(`Page ${p} of ${pageCount}`, PW - M, PH - 3, { align: 'right' });
+    }
+
+    // Save
+    const safeName = (data.siteName || 'site').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+    const dateStr  = data.date ? data.date.replace(/-/g, '') : 'undated';
+    doc.save(`bioblue-driver-audit-${safeName}-${dateStr}.pdf`);
+
+    hideSpinner();
+    btn.disabled = false;
+
+  } catch (err) {
+    console.error('PDF error:', err);
+    hideSpinner();
+    alert('PDF generation failed: ' + err.message);
+    btn.disabled = false;
+  }
+}
+
+/* ── PDF helpers ───────────────────────────── */
+function pdfSectionHeader(doc, title, y, M, CW) {
+  doc.setFillColor(245, 166, 35);
+  doc.rect(M, y, CW, 6.5, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(13, 17, 23);
+  doc.text(title, M + 3, y + 4.5);
+  return y + 10;
+}
+
+function pdfTwoColTable(doc, rows, y, M, CW) {
+  rows.forEach((row, i) => {
+    const bg = i % 2 === 0 ? [248,248,248] : [255,255,255];
+    doc.setFillColor(...bg);
+    doc.rect(M, y, CW, 6.5, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(80, 80, 80);
+    doc.text(row[0], M + 2, y + 4.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(20, 20, 20);
+    const val = doc.splitTextToSize(String(row[1]), CW * 0.6);
+    doc.text(val, M + CW * 0.38, y + 4.5);
+    y += 7;
+  });
+  return y + 3;
+}
+
+function collectData() {
+  const checklist = CHECKLIST_QUESTIONS.map(q => {
+    const activeBtn = document.querySelector(`.yn-btn.active[data-id="${q.id}"]`);
+    return { text: q.text, answer: activeBtn ? activeBtn.dataset.val : null };
+  });
+  return {
+    siteName: document.getElementById('site-name').value.trim(),
+    address:  document.getElementById('site-address').value.trim(),
+    date:     document.getElementById('audit-date').value,
+    time:     document.getElementById('audit-time').value,
+    driver:   document.getElementById('driver-name').value.trim(),
+    bdm:      document.getElementById('bdm-name').value.trim(),
+    state:    document.getElementById('state-select').value,
+    tankSize: document.getElementById('tank-size').value.trim(),
+    tankType: document.getElementById('tank-type').value,
+    pump:     document.getElementById('pump-type').value,
+    level:    document.getElementById('tank-level').value.trim(),
+    checklist,
+    mapNotes: document.getElementById('map-notes').value.trim(),
+    notes:    document.getElementById('general-notes').value.trim(),
+  };
+}
+
+function showSpinner(msg) {
+  document.getElementById('spinner-text').textContent = msg || 'WORKING…';
+  document.getElementById('spinner').classList.add('active');
+}
+function hideSpinner() {
+  document.getElementById('spinner').classList.remove('active');
+}
+
+</script>
+
+<!-- Load Maps API -->
+<script>
+// Maps loaded in loadMapsAPI() after DOM ready
+</script>
+
+</body>
+</html>
