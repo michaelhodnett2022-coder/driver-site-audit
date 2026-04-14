@@ -532,7 +532,7 @@
   <!-- ═══════════════════════════════════════════════════════
        SECTION S1 — SITE INFORMATION
        Fields: S1-F1 Site Name, S1-F2 Address, S1-F3 Date,
-               S1-F4 Time, S1-F5 Driver, S1-F6 BDM, S1-F7 State
+               S1-F5 Driver, S1-F7 State
   ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s1">
     <div class="section-header">
@@ -558,14 +558,10 @@
           <div class="geocode-status" id="geocode-status"></div>
         </div>
       </div>
-      <div class="field-row">
+      <div class="field-row full">
         <div class="field-group">
           <label>S1-F3 &nbsp; Audit Date</label>
           <input type="date" id="audit-date">
-        </div>
-        <div class="field-group">
-          <label>S1-F4 &nbsp; Audit Time</label>
-          <input type="time" id="audit-time">
         </div>
       </div>
       <div class="field-row full">
@@ -574,11 +570,7 @@
           <input type="text" id="driver-name" placeholder="Full name">
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label>S1-F6 &nbsp; BioBlue Contact</label>
-          <input type="text" id="bdm-name" value="Michael Hodnett" placeholder="BDM">
-        </div>
+      <div class="field-row full">
         <div class="field-group">
           <label>S1-F7 &nbsp; State</label>
           <select id="state-select">
@@ -598,10 +590,9 @@
 
   <!-- ═══════════════════════════════════════════════════════
        SECTION S2 — C.1 ON-SITE STORAGE TANK AUDIT
-       Fields: S2-F1 Tank ID, S2-F2 Serial#, S2-F3 Owned By,
-               S2-F4 Tank Type, S2-F5 Volume, S2-F6 Safe Fill,
-               S2-F7 Current Level, S2-F8 Fill Type, S2-F9 Fill Size,
-               S2-F10 Dip System, S2-F11 Trident
+       Fields: S2-F4 Tank Type, S2-F5 Tank Size, S2-F6 Safe Fill,
+               S2-F8 Fill Connection Type,
+               S2-F11 Level Indicator (YES/NO + type dropdown)
   ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s2">
     <div class="section-header">
@@ -610,25 +601,6 @@
     </div>
     <div class="section-body">
       <div class="field-row">
-        <div class="field-group">
-          <label>S2-F1 &nbsp; Bulk Tank ID (if multiple)</label>
-          <input type="text" id="tank-id" placeholder="e.g. Tank 1 / Main">
-        </div>
-        <div class="field-group">
-          <label>S2-F2 &nbsp; BioBlue Assigned Tank Serial #</label>
-          <input type="text" id="tank-serial" placeholder="ADBT…">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label>S2-F3 &nbsp; Tank / Equipment Owned By</label>
-          <select id="tank-owner">
-            <option value="">Select…</option>
-            <option>Client</option>
-            <option>BioBlue</option>
-            <option>Other</option>
-          </select>
-        </div>
         <div class="field-group">
           <label>S2-F4 &nbsp; Tank Type</label>
           <select id="tank-type">
@@ -639,10 +611,8 @@
             <option>Cabinet Type</option>
           </select>
         </div>
-      </div>
-      <div class="field-row">
         <div class="field-group">
-          <label>S2-F5 &nbsp; Tank Volume (L)</label>
+          <label>S2-F5 &nbsp; Tank Size</label>
           <select id="tank-size">
             <option value="">Select…</option>
             <option>2,500L</option>
@@ -654,16 +624,12 @@
             <option>Other</option>
           </select>
         </div>
+      </div>
+      <div class="field-row">
         <div class="field-group">
           <label>S2-F6 &nbsp; Safe Fill Level (L)</label>
           <input type="text" id="tank-safe-fill" placeholder="e.g. 4500">
         </div>
-        <div class="field-group">
-          <label>S2-F7 &nbsp; Current Level (L)</label>
-          <input type="text" id="tank-level" placeholder="e.g. 1200">
-        </div>
-      </div>
-      <div class="field-row">
         <div class="field-group">
           <label>S2-F8 &nbsp; Fill Point Connection Type</label>
           <select id="fill-type">
@@ -675,30 +641,67 @@
             <option>Other</option>
           </select>
         </div>
-        <div class="field-group">
-          <label>S2-F9 &nbsp; Fill Point Connection Size</label>
-          <select id="fill-size">
-            <option value="">Select…</option>
-            <option>2"</option>
-            <option>3"</option>
-          </select>
+      </div>
+
+      <!-- S2-F11 Level Indicator — YES/NO with conditional type dropdown -->
+      <div class="field-group" style="margin-top:4px;">
+        <label>S2-F11 &nbsp; Is there a level indicator available?</label>
+        <div class="yn-btns" style="margin-top:6px;display:flex;gap:8px;">
+          <button class="yn-btn yes" id="level-yes" onclick="setLevelIndicator('YES')" style="flex:1;">YES</button>
+          <button class="yn-btn no"  id="level-no"  onclick="setLevelIndicator('NO')"  style="flex:1;">NO</button>
+        </div>
+        <div id="level-type-wrap" style="display:none;margin-top:10px;">
+          <div class="field-group">
+            <label>What type?</label>
+            <select id="level-type">
+              <option value="">Select…</option>
+              <option>In Store Electronic (behind the counter print out)</option>
+              <option>Tank Mounted Electronic (Occio)</option>
+              <option>Tank Mounted Sight Tube or similar</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label>S2-F10 &nbsp; Dip Reporting / Level Monitoring System</label>
-          <input type="text" id="dip-system" placeholder="e.g. Trident Monitor / N/A">
+
+      <!-- S2 Tank QA Questions (moved from checklist) -->
+      <div style="margin-top:16px;border-top:1px solid var(--border-l);padding-top:14px;">
+
+        <!-- C1-Q20 -->
+        <div class="yn-question">
+          <div class="yn-label">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">C1-Q20</span>If access point higher than 2m; is there safe raised platform/rails or secure tether point?
+          </div>
+          <div class="yn-btns">
+            <button class="yn-btn yes" data-id="q20" data-val="YES" onclick="setYN(this)">YES</button>
+            <button class="yn-btn no"  data-id="q20" data-val="NO"  onclick="setYN(this)">NO</button>
+            <button class="yn-btn na"  data-id="q20" data-val="N/A" onclick="setYN(this)">N/A</button>
+          </div>
         </div>
-        <div class="field-group">
-          <label>S2-F11 &nbsp; Trident Monitoring Installed?</label>
-          <select id="trident">
-            <option value="">Select…</option>
-            <option>Yes</option>
-            <option>No</option>
-            <option>N/A</option>
-          </select>
+
+        <!-- C1-Q21 -->
+        <div class="yn-question">
+          <div class="yn-label">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">C1-Q21</span>Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?
+          </div>
+          <div class="yn-btns">
+            <button class="yn-btn yes" data-id="q21" data-val="YES" onclick="setYN(this)">YES</button>
+            <button class="yn-btn no"  data-id="q21" data-val="NO"  onclick="setYN(this)">NO</button>
+          </div>
         </div>
+
+        <!-- C1-Q22 -->
+        <div class="yn-question" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
+          <div class="yn-label">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">C1-Q22</span>Is the Safe Fill Level clearly marked/indicated on the tank?
+          </div>
+          <div class="yn-btns">
+            <button class="yn-btn yes" data-id="q22" data-val="YES" onclick="setYN(this)">YES</button>
+            <button class="yn-btn no"  data-id="q22" data-val="NO"  onclick="setYN(this)">NO</button>
+          </div>
+        </div>
+
       </div>
+
     </div>
   </div>
 
@@ -880,7 +883,7 @@ const CHECKLIST_QUESTIONS = [
 
   // ── B.1 TRUCK ACCESS ──────────────────────────────────
   /* B1-Q1 */ { id: 'q1', ref: 'B1-Q1', text: 'Is truck access to/from the customer site free of obstruction?', group: 'ACCESS' },
-  /* B1-Q2 */ { id: 'q2', ref: 'B1-Q2', text: 'Are there any height restrictions at this site?', group: 'ACCESS',
+  /* B1-Q2 */ { id: 'q2', ref: 'B1-Q2', text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
     sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate' }, triggerVal: 'YES' },
   /* B1-Q3 */ { id: 'q3', ref: 'B1-Q3', text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS' },
   /* B1-Q4 — dropdown, not YES/NO */
@@ -898,10 +901,8 @@ const CHECKLIST_QUESTIONS = [
   /* B2-Q13 */ { id: 'q13', ref: 'B2-Q13', text: 'Are there any site-specific Personal Protective Equipment (PPE) requirements?', group: 'SAFETY',
     sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hi-vis, steel caps, hard hat' }, triggerVal: 'YES' },
 
-  // ── C.1 TANK & FILL POINT CHECKS ─────────────────────
-  /* C1-Q20 */ { id: 'q20', ref: 'C1-Q20', text: 'If access point higher than 2m; is there safe raised platform/rails or secure tether point?', group: 'TANK_QA', yna: true },
-  /* C1-Q21 */ { id: 'q21', ref: 'C1-Q21', text: 'Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?', group: 'TANK_QA' },
-  /* C1-Q22 */ { id: 'q22', ref: 'C1-Q22', text: 'Is the Safe Fill Level clearly marked/indicated on the tank?', group: 'TANK_QA' },
+  // ── C.1 TANK & FILL POINT CHECKS — moved to S2 section
+  // C1-Q20, C1-Q21, C1-Q22 are rendered directly in S2 (above the checklist)
 
 ];
 
@@ -948,9 +949,6 @@ function initClock() {
 function initDates() {
   const now = new Date();
   document.getElementById('audit-date').value = now.toISOString().split('T')[0];
-  document.getElementById('audit-time').value =
-    now.getHours().toString().padStart(2,'0') + ':' +
-    now.getMinutes().toString().padStart(2,'0');
 }
 
 function buildChecklist() {
@@ -1707,28 +1705,48 @@ async function generatePDF() {
       ['Customer / Site', data.siteName || '—'],
       ['Address',         data.address  || '—'],
       ['Audit Date',      data.date     || '—'],
-      ['Audit Time',      data.time     || '—'],
       ['Driver',          data.driver   || '—'],
-      ['BioBlue Contact', data.bdm      || '—'],
       ['State',           data.state    || '—'],
     ];
     y = pdfTwoColTable(doc, infoRows, y, M, CW);
 
     // ── Section: Tank C1
     y = pdfSectionHeader(doc, 'C.1 ON-SITE STORAGE TANK AUDIT', y, M, CW);
+    const levelIndicatorStr = data.levelIndicator === 'YES'
+      ? 'YES — ' + (data.levelType || 'Type not specified')
+      : (data.levelIndicator || '—');
     const tankRows = [
-      ['Tank ID',           data.tankId      || '—'],
-      ['Tank Serial #',     data.tankSerial  || '—'],
-      ['Owned By',          data.tankOwner   || '—'],
       ['Tank Type',         data.tankType    || '—'],
-      ['Tank Volume',       data.tankSize    || '—'],
+      ['Tank Size',         data.tankSize    || '—'],
       ['Safe Fill Level',   data.tankSafeFill|| '—'],
-      ['Current Level',     data.tankLevel   || '—'],
-      ['Fill Connection',   (data.fillType || '—') + (data.fillSize ? '  ' + data.fillSize : '')],
-      ['Dip / Monitoring',  data.dipSystem   || '—'],
-      ['Trident Installed', data.trident     || '—'],
+      ['Fill Connection',   data.fillType    || '—'],
+      ['Level Indicator',   levelIndicatorStr],
     ];
     y = pdfTwoColTable(doc, tankRows, y, M, CW);
+
+    // Tank QA questions (moved from checklist into S2)
+    const tankQA = [
+      { ref: 'C1-Q20', text: 'If access point higher than 2m; is there safe raised platform/rails or secure tether point?', id: 'q20' },
+      { ref: 'C1-Q21', text: 'Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?',         id: 'q21' },
+      { ref: 'C1-Q22', text: 'Is the Safe Fill Level clearly marked/indicated on the tank?',                                 id: 'q22' },
+    ];
+    tankQA.forEach(q => {
+      if (y > PH - 30) { doc.addPage(); y = M; }
+      const answer = data.tankQAAnswers?.[q.id] || '—';
+      const ansColor = answer === 'YES' ? [22,163,74] : answer === 'NO' ? [220,38,38] : [160,160,160];
+      doc.setFillColor(...ansColor);
+      doc.rect(M, y, 2.5, 5, 'F');
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(40, 40, 40);
+      const wrapped = doc.splitTextToSize(`[${q.ref}]  ${q.text}`, CW - 25);
+      doc.text(wrapped, M + 5, y + 4);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...ansColor);
+      doc.text(answer, M + CW - 2, y + 4, { align: 'right' });
+      y += 6 + (wrapped.length - 1) * 4;
+    });
+    y += 4;
 
     // ── Section: Checklist
     y = pdfSectionHeader(doc, 'SITE CHECKLIST', y, M, CW);
@@ -1923,27 +1941,26 @@ function collectData() {
     return { text: q.text, ref: q.ref, group: q.group, answer, subAnswer, subLabel: q.sub ? q.sub.label : null };
   });
   return {
-    siteName:    document.getElementById('site-name').value.trim(),
-    address:     document.getElementById('site-address').value.trim(),
-    date:        document.getElementById('audit-date').value,
-    time:        document.getElementById('audit-time').value,
-    driver:      document.getElementById('driver-name').value.trim(),
-    bdm:         document.getElementById('bdm-name').value.trim(),
-    state:       document.getElementById('state-select').value,
-    tankId:      document.getElementById('tank-id').value.trim(),
-    tankSerial:  document.getElementById('tank-serial').value.trim(),
-    tankOwner:   document.getElementById('tank-owner').value,
-    tankType:    document.getElementById('tank-type').value,
-    tankSize:    document.getElementById('tank-size').value,
-    tankSafeFill:document.getElementById('tank-safe-fill').value.trim(),
-    tankLevel:   document.getElementById('tank-level').value.trim(),
-    fillType:    document.getElementById('fill-type').value,
-    fillSize:    document.getElementById('fill-size').value,
-    dipSystem:   document.getElementById('dip-system').value.trim(),
-    trident:     document.getElementById('trident').value,
+    siteName:      document.getElementById('site-name').value.trim(),
+    address:       document.getElementById('site-address').value.trim(),
+    date:          document.getElementById('audit-date').value,
+    driver:        document.getElementById('driver-name').value.trim(),
+    state:         document.getElementById('state-select').value,
+    tankType:      document.getElementById('tank-type').value,
+    tankSize:      document.getElementById('tank-size').value,
+    tankSafeFill:  document.getElementById('tank-safe-fill').value.trim(),
+    fillType:      document.getElementById('fill-type').value,
+    levelIndicator: document.getElementById('level-yes').classList.contains('active') ? 'YES' :
+                    document.getElementById('level-no').classList.contains('active')  ? 'NO'  : '',
+    levelType:     document.getElementById('level-type').value,
+    tankQAAnswers: {
+      q20: (() => { const b = document.querySelector('.yn-btn.active[data-id="q20"]'); return b ? b.dataset.val : '—'; })(),
+      q21: (() => { const b = document.querySelector('.yn-btn.active[data-id="q21"]'); return b ? b.dataset.val : '—'; })(),
+      q22: (() => { const b = document.querySelector('.yn-btn.active[data-id="q22"]'); return b ? b.dataset.val : '—'; })(),
+    },
     checklist,
-    mapNotes:    document.getElementById('map-notes').value.trim(),
-    notes:       document.getElementById('general-notes').value.trim(),
+    mapNotes:      document.getElementById('map-notes').value.trim(),
+    notes:         document.getElementById('general-notes').value.trim(),
   };
 }
 
@@ -1953,6 +1970,13 @@ function showSpinner(msg) {
 }
 function hideSpinner() {
   document.getElementById('spinner').classList.remove('active');
+}
+
+function setLevelIndicator(val) {
+  document.getElementById('level-yes').classList.toggle('active', val === 'YES');
+  document.getElementById('level-no').classList.toggle('active',  val === 'NO');
+  document.getElementById('level-type-wrap').style.display = val === 'YES' ? 'block' : 'none';
+  if (val === 'NO') document.getElementById('level-type').value = '';
 }
 
 </script>
