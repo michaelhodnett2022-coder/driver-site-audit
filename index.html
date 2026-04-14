@@ -52,7 +52,7 @@
     overscroll-behavior: none;
   }
 
-  /* --- HEADER --- */
+  /* ─── HEADER ─────────────────────────────────────── */
   .app-header {
     background: var(--header-bg);
     border-bottom: 3px solid var(--amber);
@@ -90,10 +90,10 @@
   }
   .header-meta strong { color: var(--amber); }
 
-  /* --- MAIN LAYOUT --- */
+  /* ─── MAIN LAYOUT ─────────────────────────────────── */
   .main { padding: 16px; max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
 
-  /* --- SECTION CARD --- */
+  /* ─── SECTION CARD ────────────────────────────────── */
   .section-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -130,7 +130,7 @@
   }
   .section-body { padding: 14px; }
 
-  /* --- FORM FIELDS --- */
+  /* ─── FORM FIELDS ─────────────────────────────────── */
   .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -138,6 +138,7 @@
     margin-bottom: 10px;
   }
   .field-row.full { grid-template-columns: 1fr; }
+
   .field-group { display: flex; flex-direction: column; gap: 4px; }
 
   label {
@@ -175,7 +176,7 @@
   }
   textarea { resize: vertical; min-height: 60px; }
 
-  /* --- GPS BUTTON --- */
+  /* ─── GPS BUTTON ──────────────────────────────────── */
   .gps-row { display: flex; gap: 8px; align-items: flex-end; }
   .gps-row input { flex: 1; }
   .btn-gps {
@@ -195,7 +196,7 @@
   .btn-gps:active { background: #dbeafe; }
   .btn-gps.loading { opacity: 0.6; pointer-events: none; }
 
-  /* --- YES/NO QUESTIONS --- */
+  /* ─── YES/NO QUESTIONS ────────────────────────────── */
   .yn-question { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border-l); }
   .yn-question:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
   .yn-label {
@@ -226,6 +227,7 @@
   .yn-btn.na.active   { background: #f5f3ff; border-color: #7c3aed;      color: #7c3aed; }
   .yn-btn:active { opacity: 0.7; }
 
+  /* sub-question (conditional) */
   .yn-sub {
     margin-top: 8px;
     padding: 10px 12px;
@@ -235,7 +237,14 @@
   }
   .yn-sub label { color: var(--blue); }
 
-  /* --- MAP SECTION --- */
+  /* ─── TANK DETAILS ────────────────────────────────── */
+  .tank-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* ─── MAP SECTION ─────────────────────────────────── */
   .map-toolbar {
     display: flex;
     gap: 8px;
@@ -259,7 +268,11 @@
     font-weight: 500;
   }
   .btn-map:active { opacity: 0.7; }
-  .btn-map.active { background: var(--amber-bg); border-color: var(--amber); color: var(--amber-d); }
+  .btn-map.active {
+    background: var(--amber-bg);
+    border-color: var(--amber);
+    color: var(--amber-d);
+  }
   .btn-map.danger { color: var(--red); border-color: #fca5a5; background: #fff5f5; }
 
   #map-container {
@@ -269,8 +282,21 @@
     background: #e2e8f0;
     cursor: crosshair;
   }
-  #map-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-  #overlay-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  #map-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #overlay-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
 
   .map-hint {
     position: absolute;
@@ -298,13 +324,36 @@
     flex-wrap: wrap;
     gap: 14px;
   }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
-  .legend-line { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
-  .map-notes-row { padding: 10px 14px; border-top: 1px solid var(--border-l); }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 20px; height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
 
-  /* --- PHOTO SECTION --- */
-  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .map-notes-row {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border-l);
+  }
+
+  /* ─── PHOTO SECTION ───────────────────────────────── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
   .photo-slot {
     background: #f9fafb;
     border: 2px dashed var(--border);
@@ -320,24 +369,50 @@
     transition: border-color 0.15s;
   }
   .photo-slot:hover { border-color: var(--amber); background: var(--amber-bg); }
-  .photo-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .photo-slot .slot-label { font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: center; padding: 6px; position: relative; z-index: 1; }
-  .photo-slot .slot-icon { font-size: 22px; margin-bottom: 4px; position: relative; z-index: 1; }
+  .photo-slot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .photo-slot .slot-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    padding: 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .photo-slot .slot-icon {
+    font-size: 22px;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
   .photo-slot.has-photo .slot-label { display: none; }
   .photo-slot.has-photo .slot-icon  { display: none; }
   .photo-slot .remove-photo {
-    position: absolute; top: 4px; right: 4px;
+    position: absolute;
+    top: 4px; right: 4px;
     background: rgba(220,38,38,0.85);
-    border: none; border-radius: 50%;
+    border: none;
+    border-radius: 50%;
     width: 22px; height: 22px;
-    color: #fff; font-size: 13px; cursor: pointer;
-    display: none; align-items: center; justify-content: center;
-    z-index: 10; line-height: 1;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    line-height: 1;
   }
   .photo-slot.has-photo .remove-photo { display: flex; }
   input[type="file"] { display: none; }
 
-  /* --- GENERATE PDF --- */
+  /* ─── GENERATE PDF ────────────────────────────────── */
   .btn-generate {
     width: 100%;
     background: var(--amber);
@@ -358,14 +433,27 @@
   .btn-generate:active { background: var(--amber-d); transform: scale(0.98); }
   .btn-generate:disabled { opacity: 0.5; pointer-events: none; }
 
-  /* --- GEOCODE STATUS --- */
-  .geocode-status { font-family: var(--mono); font-size: 11px; margin-top: 5px; min-height: 14px; }
+  /* ─── GEOCODE STATUS ──────────────────────────────── */
+  .geocode-status {
+    font-family: var(--mono);
+    font-size: 11px;
+    margin-top: 5px;
+    min-height: 14px;
+  }
   .geocode-status.ok  { color: var(--green); }
   .geocode-status.err { color: var(--red); }
   .geocode-status.loading { color: var(--muted); }
 
-  /* --- ZOOM CONTROLS --- */
-  .zoom-controls { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
+  /* ─── ZOOM CONTROLS ───────────────────────────────── */
+  .zoom-controls {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 10;
+  }
   .zoom-btn {
     background: rgba(255,255,255,0.92);
     border: 1px solid var(--border);
@@ -373,18 +461,26 @@
     color: var(--text);
     width: 34px; height: 34px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px; cursor: pointer;
+    font-size: 20px;
+    cursor: pointer;
     box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-    line-height: 1; user-select: none; font-weight: 600;
+    line-height: 1;
+    user-select: none;
+    font-weight: 600;
   }
   .zoom-btn:active { background: #f1f5f9; }
 
-  /* --- SPINNER --- */
+  /* ─── SPINNER ─────────────────────────────────────── */
   .spinner-overlay {
-    display: none; position: fixed; inset: 0;
+    display: none;
+    position: fixed;
+    inset: 0;
     background: rgba(255,255,255,0.80);
-    z-index: 9999; align-items: center; justify-content: center;
-    flex-direction: column; gap: 14px;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
   }
   .spinner-overlay.active { display: flex; }
   .spinner {
@@ -395,20 +491,26 @@
     animation: spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner-text { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
+  .spinner-text {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
 
   #pdf-render { display: none; }
+
 </style>
 </head>
 <body>
 
-<!-- SPINNER -->
+<!-- ─── SPINNER ─────────────────────────────────────── -->
 <div class="spinner-overlay" id="spinner">
   <div class="spinner"></div>
-  <div class="spinner-text" id="spinner-text">GENERATING PDF...</div>
+  <div class="spinner-text" id="spinner-text">GENERATING PDF…</div>
 </div>
 
-<!-- HEADER -->
+<!-- ─── HEADER ─────────────────────────────────────── -->
 <div class="app-header">
   <div class="logo-block">
     <span class="logo-brand">BIOBLUE</span>
@@ -420,14 +522,15 @@
   </div>
 </div>
 
-<!-- MAIN -->
+<!-- ─── MAIN ─────────────────────────────────────────── -->
 <div class="main">
 
-  <!-- =======================================================
-       SECTION S1 - SITE INFORMATION
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S1 — SITE INFORMATION
        Fields: S1-F1 Site Name, S1-F2 Address, S1-F3 Date,
                S1-F4 Time, S1-F5 Driver, S1-F6 BDM, S1-F7 State
-  ======================================================= -->
+  ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s1">
     <div class="section-header">
       <span class="section-num">S1</span>
@@ -446,7 +549,7 @@
           <div class="gps-row">
             <input type="text" id="site-address" placeholder="e.g. 6Q4H+52 Karratha WA">
             <button class="btn-gps" id="btn-gps" onclick="getGPS()">
-              <span>&#128205;</span> GPS
+              <span>📍</span> GPS
             </button>
           </div>
           <div class="geocode-status" id="geocode-status"></div>
@@ -489,13 +592,14 @@
     </div>
   </div>
 
-  <!-- =======================================================
-       SECTION S2 - C.1 ON-SITE STORAGE TANK AUDIT
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S2 — C.1 ON-SITE STORAGE TANK AUDIT
        Fields: S2-F1 Tank ID, S2-F2 Serial#, S2-F3 Owned By,
                S2-F4 Tank Type, S2-F5 Volume, S2-F6 Safe Fill,
                S2-F7 Current Level, S2-F8 Fill Type, S2-F9 Fill Size,
                S2-F10 Dip System, S2-F11 Trident
-  ======================================================= -->
+  ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s2">
     <div class="section-header">
       <span class="section-num">S2</span>
@@ -509,14 +613,14 @@
         </div>
         <div class="field-group">
           <label>S2-F2 &nbsp; BioBlue Assigned Tank Serial #</label>
-          <input type="text" id="tank-serial" placeholder="ADBT...">
+          <input type="text" id="tank-serial" placeholder="ADBT…">
         </div>
       </div>
       <div class="field-row">
         <div class="field-group">
           <label>S2-F3 &nbsp; Tank / Equipment Owned By</label>
           <select id="tank-owner">
-            <option value="">Select...</option>
+            <option value="">Select…</option>
             <option>Client</option>
             <option>BioBlue</option>
             <option>Other</option>
@@ -525,7 +629,7 @@
         <div class="field-group">
           <label>S2-F4 &nbsp; Tank Type</label>
           <select id="tank-type">
-            <option value="">Select...</option>
+            <option value="">Select…</option>
             <option>Poly Slim</option>
             <option>Poly Round</option>
             <option>In Ground</option>
@@ -537,7 +641,7 @@
         <div class="field-group">
           <label>S2-F5 &nbsp; Tank Volume (L)</label>
           <select id="tank-size">
-            <option value="">Select...</option>
+            <option value="">Select…</option>
             <option>2,500L</option>
             <option>5,000L</option>
             <option>10,000L</option>
@@ -560,7 +664,7 @@
         <div class="field-group">
           <label>S2-F8 &nbsp; Fill Point Connection Type</label>
           <select id="fill-type">
-            <option value="">Select...</option>
+            <option value="">Select…</option>
             <option>2" Camlock</option>
             <option>2" Dry Break</option>
             <option>3" Camlock</option>
@@ -571,7 +675,7 @@
         <div class="field-group">
           <label>S2-F9 &nbsp; Fill Point Connection Size</label>
           <select id="fill-size">
-            <option value="">Select...</option>
+            <option value="">Select…</option>
             <option>2"</option>
             <option>3"</option>
           </select>
@@ -585,7 +689,7 @@
         <div class="field-group">
           <label>S2-F11 &nbsp; Trident Monitoring Installed?</label>
           <select id="trident">
-            <option value="">Select...</option>
+            <option value="">Select…</option>
             <option>Yes</option>
             <option>No</option>
             <option>N/A</option>
@@ -595,13 +699,15 @@
     </div>
   </div>
 
-  <!-- =======================================================
-       SECTION S3 - SITE CHECKLIST
-       Questions defined in CHECKLIST_QUESTIONS array in JS below.
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S3 — SITE CHECKLIST
+       Questions defined in CHECKLIST_QUESTIONS array in JS.
        To add/edit/remove questions, find that array in the
-       script block. Each question has: id, ref, group, text.
+       <script> block — each question has an id, ref, group,
+       and text property.
        Groups: ACCESS (B.1), ENTRY (B.1), SAFETY (B.2), TANK_QA (C.1)
-  ======================================================= -->
+  ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s3">
     <div class="section-header">
       <span class="section-num">S3</span>
@@ -612,54 +718,84 @@
     </div>
   </div>
 
-  <!-- =======================================================
-       SECTION S4 - SITE MAP & ACCESS
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S4 — SITE MAP & ACCESS
        Tools: Entry arrow, Exit arrow, Tank marker, Note marker
        Fields: S4-F1 Map Notes
-  ======================================================= -->
+  ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s4">
     <div class="section-header">
       <span class="section-num">S4</span>
       <span class="section-title">Site Map &amp; Access</span>
     </div>
+
+    <!-- Toolbar -->
     <div class="map-toolbar">
-      <button class="btn-map" id="tool-entry" onclick="setTool('entry')">&#128994; Entry</button>
-      <button class="btn-map" id="tool-exit"  onclick="setTool('exit')">&#128308; Exit</button>
-      <button class="btn-map" id="tool-tank"  onclick="setTool('tank')">&#128309; Tank</button>
-      <button class="btn-map" id="tool-note"  onclick="setTool('note')">&#128221; Note</button>
-      <button class="btn-map danger" id="tool-erase" onclick="clearAnnotations()">&#128465; Clear</button>
+      <button class="btn-map" id="tool-entry" onclick="setTool('entry')" title="Draw entry arrow">
+        🟢 Entry
+      </button>
+      <button class="btn-map" id="tool-exit" onclick="setTool('exit')" title="Draw exit arrow">
+        🔴 Exit
+      </button>
+      <button class="btn-map" id="tool-tank" onclick="setTool('tank')" title="Mark tank position">
+        🔵 Tank
+      </button>
+      <button class="btn-map" id="tool-note" onclick="setTool('note')" title="Add text note">
+        📝 Note
+      </button>
+      <button class="btn-map danger" id="tool-erase" onclick="clearAnnotations()">
+        🗑 Clear
+      </button>
     </div>
+
+    <!-- Map -->
     <div id="map-container">
       <canvas id="map-canvas"></canvas>
       <canvas id="overlay-canvas"></canvas>
+
+      <!-- Zoom controls -->
       <div class="zoom-controls">
-        <div class="zoom-btn" onclick="zoomMap(1)">+</div>
-        <div class="zoom-btn" onclick="zoomMap(-1)">&#8722;</div>
+        <div class="zoom-btn" onclick="zoomMap(1)" title="Zoom in">+</div>
+        <div class="zoom-btn" onclick="zoomMap(-1)" title="Zoom out">−</div>
       </div>
+
+      <!-- Hint bar -->
       <div class="map-hint" id="map-hint">
         Tap <span>Entry / Exit / Tank</span> then tap map to place
       </div>
     </div>
+
+    <!-- Legend -->
     <div class="map-legend">
-      <div class="legend-item"><div class="legend-line" style="background:var(--green)"></div> Entry</div>
-      <div class="legend-item"><div class="legend-line" style="background:var(--red)"></div> Exit</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Tank</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Note</div>
+      <div class="legend-item">
+        <div class="legend-line" style="background:var(--green)"></div> Entry
+      </div>
+      <div class="legend-item">
+        <div class="legend-line" style="background:var(--red)"></div> Exit
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--blue)"></div> Tank
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--amber)"></div> Note
+      </div>
     </div>
+
+    <!-- Map notes -->
     <div class="map-notes-row">
       <div class="field-group">
         <label>S4-F1 &nbsp; Access / Map Notes</label>
-        <textarea id="map-notes" placeholder="e.g. Enter via north gate, tank is left of weighbridge, reverse in from east side..." rows="3"></textarea>
+        <textarea id="map-notes" placeholder="e.g. Enter via north gate, tank is left of weighbridge, reverse in from east side…" rows="3"></textarea>
       </div>
     </div>
   </div>
 
-  <!-- =======================================================
-       SECTION S5 - SITE PHOTOS
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S5 — SITE PHOTOS
        Photo slot labels defined in PHOTO_LABELS array in JS.
        To rename or add slots, edit that array.
        Current slots: S5-P1 to S5-P4
-  ======================================================= -->
+  ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s5">
     <div class="section-header">
       <span class="section-num">S5</span>
@@ -670,10 +806,10 @@
     </div>
   </div>
 
-  <!-- =======================================================
-       SECTION S6 - GENERAL NOTES
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S6 — GENERAL NOTES
        Fields: S6-F1 General Notes (free text)
-  ======================================================= -->
+  ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s6">
     <div class="section-header">
       <span class="section-num">S6</span>
@@ -681,42 +817,33 @@
     </div>
     <div class="section-body">
       <label style="font-family:var(--mono);font-size:10px;color:var(--label);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:6px;">S6-F1 &nbsp; Notes for future drivers</label>
-      <textarea id="general-notes" placeholder="Any additional notes for future drivers visiting this site..." rows="4"></textarea>
+      <textarea id="general-notes" placeholder="Any additional notes for future drivers visiting this site…" rows="4"></textarea>
     </div>
   </div>
 
-  <!-- GENERATE PDF BUTTON -->
+  <!-- GENERATE PDF -->
   <button class="btn-generate" id="btn-pdf" onclick="generatePDF()">
-    &#8659; Generate Site Report PDF
+    ⬇ Generate Site Report PDF
   </button>
 
 </div><!-- /main -->
 
+<!-- Hidden PDF render target -->
 <div id="pdf-render"></div>
 
-<!-- =======================================================
-     JAVASCRIPT
-     
-     QUICK EDIT GUIDE:
-     - To change photo slot names: find PHOTO_LABELS array
-     - To add/edit/remove checklist questions: find CHECKLIST_QUESTIONS array
-     - To change map default zoom: find mapState.zoom
-     - To change default BDM name: find value="Michael Hodnett" in S1-F6
-     - To change Maps API key: find MAPS_API_KEY at top of page
-======================================================= -->
+<!-- ─── SCRIPTS ─────────────────────────────────────── -->
 <script>
 
-/* =====================================================
-   CONFIG — edit these arrays to customise the form
-===================================================== */
-
+/* ══════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════ */
 const MAPS_KEY = window.MAPS_API_KEY;
 
-/* -----------------------------------------------------
+/* ──────────────────────────────────────────────
    PHOTO SLOTS  (S5-P1 to S5-P4)
    To rename: edit the label strings below.
    To add a slot: add a new string to the array.
------------------------------------------------------ */
+────────────────────────────────────────────── */
 const PHOTO_LABELS = [
   /* S5-P1 */ 'Site Entry / Gate',
   /* S5-P2 */ 'Tank & Pump',
@@ -724,78 +851,72 @@ const PHOTO_LABELS = [
   /* S5-P4 */ 'Other'
 ];
 
-/* -----------------------------------------------------
+/* ──────────────────────────────────────────────
    CHECKLIST QUESTIONS
-   
-   Each question has:
-     id         -- internal key (do not change)
-     ref        -- reference shown on screen and PDF
-     group      -- section group (ACCESS / ENTRY / SAFETY / TANK_QA)
-     text       -- question wording (edit freely)
-     yna        -- true = shows YES / NO / N/A buttons (optional)
-     sub        -- conditional follow-up text field (optional)
-     triggerVal -- which answer (YES or NO) reveals the sub field
-   
-   To ADD a question:  copy an existing block, give it a new unique
-                       id (e.g. 'q25') and ref, place in the right group.
-   To REMOVE:          delete the whole { ... }, line.
-   To EDIT wording:    change the text value only.
------------------------------------------------------ */
+   Reference system:
+     id       — internal JS key (do not change)
+     ref      — human reference shown on screen & PDF
+     group    — section grouping (ACCESS / ENTRY / SAFETY / TANK_QA)
+     text     — question wording (edit freely)
+     yna      — true = shows YES / NO / N/A buttons
+     sub      — optional conditional follow-up field
+     triggerVal — which answer (YES/NO) reveals the sub field
+
+   To ADD a question: copy an existing entry, give it a new
+     unique id (e.g. 'q25') and ref, place it in the right group.
+   To REMOVE a question: delete the whole { } block.
+   To EDIT wording: change the text property only.
+────────────────────────────────────────────── */
 const CHECKLIST_QUESTIONS = [
 
-  // -- B.1 TRUCK ACCESS --
-  /* B1-Q1 */ { id: 'q1',  ref: 'B1-Q1', text: 'Is truck access to/from the customer site free of obstruction?', group: 'ACCESS' },
-  /* B1-Q2 */ { id: 'q2',  ref: 'B1-Q2', text: 'Are there any overhead wires obstructing delivery zone or site entrance/thoroughfare?', group: 'ACCESS' },
-  /* B1-Q3 */ { id: 'q3',  ref: 'B1-Q3', text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS' },
-  /* B1-Q4 */ { id: 'q4',  ref: 'B1-Q4', text: 'Can vehicle be manoeuvred without reversing on premises?', group: 'ACCESS' },
-  /* B1-Q5 */ { id: 'q5',  ref: 'B1-Q5', text: 'Parking and unloading areas are clearly marked or communicated.', group: 'ACCESS' },
+  // ── B.1 TRUCK ACCESS ──────────────────────────────────
+  /* B1-Q1 */ { id: 'q1', ref: 'B1-Q1', text: 'Is truck access to/from the customer site free of obstruction?', group: 'ACCESS' },
+  /* B1-Q2 */ { id: 'q2', ref: 'B1-Q2', text: 'Are there any height restrictions at this site?', group: 'ACCESS',
+    sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate' }, triggerVal: 'YES' },
+  /* B1-Q3 */ { id: 'q3', ref: 'B1-Q3', text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS' },
+  /* B1-Q4 — dropdown, not YES/NO */
+  /* B1-Q4 */ { id: 'q4', ref: 'B1-Q4', text: 'Maximum truck size configuration permitted on site?', group: 'ACCESS',
+    dropdown: ['LV Only', 'Single Trailer', 'B-Double', 'Pocket Road Train', 'Full Road Train'] },
 
-  // -- B.1 ENTRY & GATE ACCESS --
-  /* B1-Q6 */ { id: 'q6',  ref: 'B1-Q6', text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ENTRY',
-    sub: { id: 'q6-detail', label: 'Gate code / key / access details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES' },
+  // ── B.1 ENTRY & GATE ACCESS ───────────────────────────
+  /* B1-Q6 */ { id: 'q6', ref: 'B1-Q6', text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ENTRY',
+    sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES' },
 
-  // -- B.2 SITE SAFETY --
-  /* B2-Q7  */ { id: 'q7',  ref: 'B2-Q7',  text: 'Is a site-specific induction or sign-in process required? (if YES, include details in Notes)', group: 'SAFETY',
-    sub: { id: 'q7-induct', label: 'Induction details / who to contact', placeholder: 'e.g. Sign in at site office, ask for site supervisor' }, triggerVal: 'YES' },
-  /* B2-Q8  */ { id: 'q8',  ref: 'B2-Q8',  text: 'Is there safe pedestrian access to the tank fill point(s) to undertake delivery?', group: 'SAFETY' },
-  /* B2-Q9  */ { id: 'q9',  ref: 'B2-Q9',  text: 'Is the delivery area/zone free of hazards or obstacles?', group: 'SAFETY' },
+  // ── B.2 SITE SAFETY ───────────────────────────────────
+  /* B2-Q7  */ { id: 'q7',  ref: 'B2-Q7',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
+    sub: { id: 'q7-induct', label: 'Provide details', placeholder: 'e.g. Sign in at site office, ask for site supervisor' }, triggerVal: 'YES' },
   /* B2-Q10 */ { id: 'q10', ref: 'B2-Q10', text: 'Is adequate lighting provided for early morning or evening deliveries?', group: 'SAFETY' },
-  /* B2-Q11 */ { id: 'q11', ref: 'B2-Q11', text: 'Safety cones or barriers are available to secure the delivery zone?', group: 'SAFETY' },
-  /* B2-Q12 */ { id: 'q12', ref: 'B2-Q12', text: 'Are tank vents fitted, with no signs of overpressure/vacuum stress (e.g. deformation)?', group: 'SAFETY' },
   /* B2-Q13 */ { id: 'q13', ref: 'B2-Q13', text: 'Are there any site-specific Personal Protective Equipment (PPE) requirements?', group: 'SAFETY',
-    sub: { id: 'q13-ppe', label: 'PPE required -- list all', placeholder: 'e.g. Hi-vis, steel caps, hard hat' }, triggerVal: 'YES' },
+    sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hi-vis, steel caps, hard hat' }, triggerVal: 'YES' },
 
-  // -- C.1 TANK & FILL POINT CHECKS --
-  /* C1-Q18 */ { id: 'q18', ref: 'C1-Q18', text: 'Are fill connections in good condition?', group: 'TANK_QA' },
-  /* C1-Q19 */ { id: 'q19', ref: 'C1-Q19', text: 'Is driver able to complete delivery (access fill point) without risking injury?', group: 'TANK_QA' },
+  // ── C.1 TANK & FILL POINT CHECKS ─────────────────────
   /* C1-Q20 */ { id: 'q20', ref: 'C1-Q20', text: 'If access point higher than 2m; is there safe raised platform/rails or secure tether point?', group: 'TANK_QA', yna: true },
-  /* C1-Q21 */ { id: 'q21', ref: 'C1-Q21', text: 'Are fill points correctly labelled for AdBlue and with tank number (if applicable)?', group: 'TANK_QA' },
+  /* C1-Q21 */ { id: 'q21', ref: 'C1-Q21', text: 'Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?', group: 'TANK_QA' },
   /* C1-Q22 */ { id: 'q22', ref: 'C1-Q22', text: 'Is the Safe Fill Level clearly marked/indicated on the tank?', group: 'TANK_QA' },
-  /* C1-Q23 */ { id: 'q23', ref: 'C1-Q23', text: 'Is tank dip point correctly labelled for AdBlue and with tank number (if applicable)?', group: 'TANK_QA' },
-  /* C1-Q24 */ { id: 'q24', ref: 'C1-Q24', text: 'Is level monitoring system output accurate and marked in litres?', group: 'TANK_QA', yna: true },
 
 ];
 
-/* =====================================================
+/* ══════════════════════════════════════════════
    STATE
-===================================================== */
+══════════════════════════════════════════════ */
 let mapState = {
   lat: -25.2744,
   lng: 133.7751,
-  zoom: 17,          // <-- change default zoom level here
+  zoom: 17,
   loaded: false,
   geocoder: null,
-  annotations: [],
+  annotations: [],   // { type, lat, lng, label? }
   activeTool: null,
+  dragging: false,
   dragStart: null,
-  arrowStart: null,
+  arrowStart: null,  // for two-tap arrow mode
 };
 
 let photos = [null, null, null, null];
 
-/* =====================================================
+/* ══════════════════════════════════════════════
    INIT
-===================================================== */
+══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   initClock();
   initDates();
@@ -833,22 +954,38 @@ function buildChecklist() {
   });
 
   const groupLabels = {
-    ACCESS:  'B.1 Truck Access',
-    ENTRY:   'B.1 Entry & Gate Access',
-    SAFETY:  'B.2 Site Safety',
-    TANK_QA: 'C.1 Tank & Fill Point Checks',
+    ACCESS:   '🚛 B.1 Truck Access',
+    ENTRY:    '🔒 B.1 Entry & Gate Access',
+    SAFETY:   '🦺 B.2 Site Safety',
+    TANK_QA:  '🛢️ C.1 Tank & Fill Point Checks',
   };
 
   Object.entries(groups).forEach(([groupKey, questions]) => {
     const heading = document.createElement('div');
-    heading.style.cssText = 'font-family:var(--mono);font-size:10px;font-weight:600;color:var(--label);letter-spacing:0.1em;text-transform:uppercase;padding:4px 0 10px;margin-top:4px;border-bottom:1px solid var(--border-l);margin-bottom:12px;';
-    heading.textContent = groupLabels[groupKey] || groupKey;
+    heading.style.cssText = 'font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--label); letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 0 10px; margin-top: 4px; border-bottom: 1px solid var(--border-l); margin-bottom: 12px;';
+    heading.textContent = (groupLabels[groupKey] || groupKey).replace(/[^\x00-\x7F]/g, '').trim();
     body.appendChild(heading);
 
     questions.forEach(q => {
       const div = document.createElement('div');
       div.className = 'yn-question';
 
+      // --- DROPDOWN type question ---
+      if (q.dropdown) {
+        const options = q.dropdown.map(o => `<option value="${o}">${o}</option>`).join('');
+        div.innerHTML = `
+          <div class="yn-label">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">${q.ref}</span>${q.text}
+          </div>
+          <select id="dd-${q.id}" style="margin-top:6px;">
+            <option value="">Select…</option>
+            ${options}
+          </select>`;
+        body.appendChild(div);
+        return;
+      }
+
+      // --- YES/NO/NA type question ---
       const naBtn = q.yna
         ? `<button class="yn-btn na" data-id="${q.id}" data-val="N/A" onclick="setYN(this)">N/A</button>`
         : '';
@@ -884,6 +1021,8 @@ function setYN(btn) {
   const val = btn.dataset.val;
   document.querySelectorAll(`.yn-btn[data-id="${id}"]`).forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+
+  // Show/hide sub-question
   const q = CHECKLIST_QUESTIONS.find(q => q.id === id);
   if (q && q.sub) {
     const subEl = document.getElementById(`sub-${id}`);
@@ -898,11 +1037,12 @@ function buildPhotoGrid() {
     slot.className = 'photo-slot';
     slot.id = `photo-slot-${i}`;
     slot.innerHTML = `
-      <div class="slot-icon">&#128247;</div>
+      <div class="slot-icon">📷</div>
       <div class="slot-label">${label}</div>
       <img id="photo-img-${i}" style="display:none">
-      <button class="remove-photo" onclick="removePhoto(event,${i})">x</button>
-      <input type="file" id="photo-input-${i}" accept="image/*" capture="environment" onchange="handlePhoto(event,${i})">`;
+      <button class="remove-photo" onclick="removePhoto(event,${i})">×</button>
+      <input type="file" id="photo-input-${i}" accept="image/*" capture="environment"
+        onchange="handlePhoto(event,${i})">`;
     slot.addEventListener('click', (e) => {
       if (e.target.classList.contains('remove-photo')) return;
       document.getElementById(`photo-input-${i}`).click();
@@ -937,9 +1077,9 @@ function removePhoto(event, index) {
   document.getElementById(`photo-input-${index}`).value = '';
 }
 
-/* =====================================================
+/* ══════════════════════════════════════════════
    GOOGLE MAPS
-===================================================== */
+══════════════════════════════════════════════ */
 function loadMapsAPI() {
   window.initMaps = initMaps;
   const script = document.createElement('script');
@@ -952,6 +1092,8 @@ function loadMapsAPI() {
 function initMaps() {
   mapState.geocoder = new google.maps.Geocoder();
   mapState.loaded = true;
+
+  // Try to get user's current location as default
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       mapState.lat = pos.coords.latitude;
@@ -961,10 +1103,19 @@ function initMaps() {
   } else {
     renderTiles();
   }
+
+  // Wire up address field for auto-geocode
   document.getElementById('site-address').addEventListener('change', geocodeAddress);
+
+  // Map interaction
   setupMapInteraction();
 }
 
+/* ──────────────────────────────────────────────
+   TILE RENDERING (pure canvas, no Maps JS map)
+   We render Google satellite tiles manually so
+   we have full pixel control for the overlay.
+────────────────────────────────────────────── */
 function tileCoords(lat, lng, zoom) {
   const n = Math.pow(2, zoom);
   const x = Math.floor((lng + 180) / 360 * n);
@@ -984,7 +1135,10 @@ function latLngToPixel(lat, lng, centerLat, centerLng, zoom, canvasW, canvasH) {
   }
   const center = project(centerLat, centerLng);
   const point  = project(lat, lng);
-  return { x: canvasW / 2 + (point.x - center.x), y: canvasH / 2 + (point.y - center.y) };
+  return {
+    x: canvasW / 2 + (point.x - center.x),
+    y: canvasH / 2 + (point.y - center.y)
+  };
 }
 
 function pixelToLatLng(px, py, centerLat, centerLng, zoom, canvasW, canvasH) {
@@ -1014,12 +1168,14 @@ function renderTiles() {
   document.getElementById('overlay-canvas').height = H;
 
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#e2e8f0';
+  ctx.fillStyle = '#1a1f2e';
   ctx.fillRect(0, 0, W, H);
 
   const zoom = mapState.zoom;
   const TILE = 256;
   const center = tileCoords(mapState.lat, mapState.lng, zoom);
+
+  // Work out pixel offset from center tile to canvas centre
   const scale = Math.pow(2, zoom);
   function worldX(lng) { return (lng + 180) / 360 * scale * TILE; }
   function worldY(lat) {
@@ -1028,10 +1184,15 @@ function renderTiles() {
   }
   const centerWX = worldX(mapState.lng);
   const centerWY = worldY(mapState.lat);
+
+  // How many tiles either side
   const tilesX = Math.ceil(W / TILE) + 2;
   const tilesY = Math.ceil(H / TILE) + 2;
+
   const startTX = center.x - Math.floor(tilesX / 2);
   const startTY = center.y - Math.floor(tilesY / 2);
+
+  // Server cycling for load balancing
   const servers = ['mt0','mt1','mt2','mt3'];
 
   for (let tx = startTX; tx <= startTX + tilesX; tx++) {
@@ -1040,23 +1201,33 @@ function renderTiles() {
       const tileWY = ty * TILE;
       const drawX = Math.round(W / 2 + tileWX - centerWX);
       const drawY = Math.round(H / 2 + tileWY - centerWY);
+
       const cacheKey = `${zoom}/${tx}/${ty}`;
       const server = servers[(tx + ty) % 4];
       const url = `https://${server}.google.com/vt/lyrs=s&x=${tx}&y=${ty}&z=${zoom}`;
+
       if (tileCache[cacheKey]) {
         ctx.drawImage(tileCache[cacheKey], drawX, drawY, TILE, TILE);
       } else {
         const img = new Image();
         img.crossOrigin = 'anonymous';
-        img.onload = () => { tileCache[cacheKey] = img; ctx.drawImage(img, drawX, drawY, TILE, TILE); renderOverlay(); };
+        img.onload = () => {
+          tileCache[cacheKey] = img;
+          ctx.drawImage(img, drawX, drawY, TILE, TILE);
+          renderOverlay();
+        };
         img.onerror = () => {};
         img.src = url;
       }
     }
   }
+
   setTimeout(renderOverlay, 100);
 }
 
+/* ──────────────────────────────────────────────
+   OVERLAY — arrows, markers, labels
+────────────────────────────────────────────── */
 function renderOverlay() {
   const canvas = document.getElementById('overlay-canvas');
   const ctx = canvas.getContext('2d');
@@ -1066,10 +1237,11 @@ function renderOverlay() {
 
   mapState.annotations.forEach(ann => {
     if (ann.type === 'entry' || ann.type === 'exit') {
-      if (!ann.fromLat) return;
+      if (!ann.fromLat) return; // needs two points
       const from = latLngToPixel(ann.fromLat, ann.fromLng, mapState.lat, mapState.lng, mapState.zoom, W, H);
-      const to   = latLngToPixel(ann.lat, ann.lng, mapState.lat, mapState.lng, mapState.zoom, W, H);
-      drawArrow(ctx, from.x, from.y, to.x, to.y, ann.type === 'entry' ? '#22c55e' : '#ef4444', 5, 18, 10);
+      const to   = latLngToPixel(ann.lat,     ann.lng,     mapState.lat, mapState.lng, mapState.zoom, W, H);
+      drawArrow(ctx, from.x, from.y, to.x, to.y,
+        ann.type === 'entry' ? '#22c55e' : '#ef4444', 5, 18, 10);
     } else if (ann.type === 'tank') {
       const p = latLngToPixel(ann.lat, ann.lng, mapState.lat, mapState.lng, mapState.zoom, W, H);
       drawTankMarker(ctx, p.x, p.y);
@@ -1079,6 +1251,7 @@ function renderOverlay() {
     }
   });
 
+  // Crosshair at center
   ctx.strokeStyle = 'rgba(245,166,35,0.4)';
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -1090,28 +1263,37 @@ function renderOverlay() {
 function drawArrow(ctx, x1, y1, x2, y2, color, lineWidth, headLen, headAngle) {
   const angle = Math.atan2(y2 - y1, x2 - x1);
   const aRad = (headAngle || 30) * Math.PI / 180;
+
+  // Shadow
   ctx.shadowColor = 'rgba(0,0,0,0.6)';
   ctx.shadowBlur = 6;
+
   ctx.strokeStyle = color;
   ctx.fillStyle   = color;
   ctx.lineWidth   = lineWidth;
   ctx.lineCap     = 'round';
+
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
   ctx.stroke();
+
+  // Arrowhead
   ctx.beginPath();
   ctx.moveTo(x2, y2);
   ctx.lineTo(x2 - headLen * Math.cos(angle - aRad), y2 - headLen * Math.sin(angle - aRad));
   ctx.lineTo(x2 - headLen * Math.cos(angle + aRad), y2 - headLen * Math.sin(angle + aRad));
   ctx.closePath();
   ctx.fill();
+
   ctx.shadowBlur = 0;
 }
 
 function drawTankMarker(ctx, x, y) {
   ctx.shadowColor = 'rgba(0,0,0,0.7)';
   ctx.shadowBlur = 8;
+
+  // Outer ring
   ctx.beginPath();
   ctx.arc(x, y, 14, 0, Math.PI * 2);
   ctx.fillStyle = 'rgba(59,130,246,0.25)';
@@ -1119,12 +1301,16 @@ function drawTankMarker(ctx, x, y) {
   ctx.strokeStyle = '#3b82f6';
   ctx.lineWidth = 2.5;
   ctx.stroke();
+
+  // Inner dot
   ctx.beginPath();
   ctx.arc(x, y, 5, 0, Math.PI * 2);
   ctx.fillStyle = '#3b82f6';
   ctx.fill();
+
+  // Label
   ctx.shadowBlur = 0;
-  ctx.font = 'bold 10px monospace';
+  ctx.font = 'bold 10px JetBrains Mono, monospace';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = 'rgba(0,0,0,0.8)';
@@ -1136,24 +1322,32 @@ function drawTankMarker(ctx, x, y) {
 function drawNoteMarker(ctx, x, y, label) {
   ctx.shadowColor = 'rgba(0,0,0,0.7)';
   ctx.shadowBlur = 6;
+
   ctx.beginPath();
   ctx.arc(x, y, 10, 0, Math.PI * 2);
   ctx.fillStyle = 'rgba(245,166,35,0.85)';
   ctx.fill();
+
   ctx.shadowBlur = 0;
-  ctx.font = 'bold 10px monospace';
+  ctx.font = 'bold 10px JetBrains Mono, monospace';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#0d1117';
   ctx.fillText('!', x, y + 4);
-  ctx.font = '10px monospace';
+
+  // Label
+  const maxW = 80;
+  ctx.font = '10px JetBrains Mono, monospace';
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = 'rgba(0,0,0,0.85)';
   ctx.lineWidth = 3;
-  const shortLabel = label.length > 12 ? label.slice(0,12)+'...' : label;
+  const shortLabel = label.length > 12 ? label.slice(0,12)+'…' : label;
   ctx.strokeText(shortLabel, x, y + 22);
   ctx.fillText(shortLabel, x, y + 22);
 }
 
+/* ──────────────────────────────────────────────
+   MAP INTERACTION
+────────────────────────────────────────────── */
 function setupMapInteraction() {
   const container = document.getElementById('map-container');
   let isPanning = false;
@@ -1161,7 +1355,10 @@ function setupMapInteraction() {
   let panStartLatLng = null;
   let touchStartDist = null;
   let touchStartZoom = null;
+  let lastTouchTime = 0;
+  let holdTimeout = null;
 
+  // Pointer / mouse — panning + tap annotation
   container.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     isPanning = true;
@@ -1173,34 +1370,55 @@ function setupMapInteraction() {
     if (!isPanning) return;
     const dx = e.clientX - panStart.x;
     const dy = e.clientY - panStart.y;
+
+    // Pan the map
+    const W = container.clientWidth;
+    const H = container.clientHeight;
     const TILE = 256;
     const scale = Math.pow(2, mapState.zoom);
     const lngPerPx = 360 / (scale * TILE);
+    const latPerPx = (panStartLatLng.lat) => {
+      const rad = panStartLatLng.lat * Math.PI / 180;
+      return (360 / (scale * TILE)) / Math.cos(rad);
+    };
     mapState.lng = panStartLatLng.lng - dx * lngPerPx;
+    const latRad = panStartLatLng.lat * Math.PI / 180;
+    const metersPerPx = 156543.03392 * Math.cos(latRad) / scale;
+    // Approximate lat from dy
     mapState.lat = panStartLatLng.lat + dy * (180 / Math.PI) / (6378137) * (TILE * scale / 256);
-    document.getElementById('map-canvas').style.transform = `translate(${dx}px, ${dy}px)`;
+
+    // Quick redraw during pan (just move canvas)
+    document.getElementById('map-canvas').style.transform =
+      `translate(${dx}px, ${dy}px)`;
     renderOverlay();
   }, { passive: true });
 
   container.addEventListener('pointerup', (e) => {
     if (!isPanning) return;
     isPanning = false;
+
     const dx = e.clientX - panStart.x;
     const dy = e.clientY - panStart.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Reset canvas transform
     document.getElementById('map-canvas').style.transform = '';
+
     if (dist > 8) {
+      // It was a pan — commit and re-render
       renderTiles();
     } else {
+      // It was a tap — place annotation
       handleMapTap(e.clientX, e.clientY);
     }
   });
 
+  // Touch pinch-to-zoom
   container.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
       touchStartDist = getTouchDist(e);
       touchStartZoom = mapState.zoom;
-      isPanning = false;
+      isPanning = false; // cancel pan during pinch
     }
   }, { passive: true });
 
@@ -1209,7 +1427,8 @@ function setupMapInteraction() {
       e.preventDefault();
       const d = getTouchDist(e);
       const ratio = d / touchStartDist;
-      mapState.zoom = Math.min(21, Math.max(12, Math.round(touchStartZoom + Math.log2(ratio))));
+      const newZoom = Math.min(21, Math.max(12, touchStartZoom + Math.log2(ratio)));
+      mapState.zoom = Math.round(newZoom);
       renderTiles();
     }
   }, { passive: false });
@@ -1221,15 +1440,22 @@ function getTouchDist(e) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-let pendingArrowStart = null;
+/* ──────────────────────────────────────────────
+   ANNOTATION TOOL
+────────────────────────────────────────────── */
+let pendingArrowStart = null; // for entry/exit two-tap mode
 
 function setTool(tool) {
   mapState.activeTool = tool;
   pendingArrowStart = null;
+
+  // Update button states
   ['entry','exit','tank','note'].forEach(t => {
     const btn = document.getElementById(`tool-${t}`);
     if (btn) btn.classList.toggle('active', t === tool);
   });
+
+  // Update hint
   const hints = {
     entry: 'Tap start then end point to draw <span>Entry arrow</span>',
     exit:  'Tap start then end point to draw <span>Exit arrow</span>',
@@ -1248,19 +1474,28 @@ function handleMapTap(clientX, clientY) {
   const py = clientY - rect.top;
   const W = container.clientWidth;
   const H = container.clientHeight;
+
   const { lat, lng } = pixelToLatLng(px, py, mapState.lat, mapState.lng, mapState.zoom, W, H);
+
   const tool = mapState.activeTool;
 
   if (tool === 'entry' || tool === 'exit') {
     if (!pendingArrowStart) {
       pendingArrowStart = { lat, lng };
-      document.getElementById('map-hint').innerHTML = `Now tap <span>end point</span> for the ${tool} arrow`;
+      document.getElementById('map-hint').innerHTML =
+        `Now tap <span>end point</span> for the ${tool} arrow`;
     } else {
-      mapState.annotations.push({ type: tool, fromLat: pendingArrowStart.lat, fromLng: pendingArrowStart.lng, lat, lng });
+      mapState.annotations.push({
+        type: tool,
+        fromLat: pendingArrowStart.lat,
+        fromLng: pendingArrowStart.lng,
+        lat, lng
+      });
       pendingArrowStart = null;
       renderOverlay();
     }
   } else if (tool === 'tank') {
+    // Only one tank marker — replace existing
     mapState.annotations = mapState.annotations.filter(a => a.type !== 'tank');
     mapState.annotations.push({ type: 'tank', lat, lng });
     renderOverlay();
@@ -1280,19 +1515,21 @@ function clearAnnotations() {
 
 function zoomMap(delta) {
   mapState.zoom = Math.min(21, Math.max(12, mapState.zoom + delta));
-  tileCache = {};
+  tileCache = {}; // clear cache on zoom change
   renderTiles();
 }
 
-/* =====================================================
+/* ══════════════════════════════════════════════
    GEOCODING
-===================================================== */
+══════════════════════════════════════════════ */
 function geocodeAddress() {
   const addr = document.getElementById('site-address').value.trim();
   if (!addr || !mapState.geocoder) return;
+
   const status = document.getElementById('geocode-status');
   status.className = 'geocode-status loading';
-  status.textContent = 'Locating...';
+  status.textContent = 'Locating…';
+
   mapState.geocoder.geocode({ address: addr, region: 'AU' }, (results, geoStatus) => {
     if (geoStatus === 'OK' && results[0]) {
       const loc = results[0].geometry.location;
@@ -1302,10 +1539,10 @@ function geocodeAddress() {
       tileCache = {};
       renderTiles();
       status.className = 'geocode-status ok';
-      status.textContent = 'OK ' + results[0].formatted_address;
+      status.textContent = '✓ ' + results[0].formatted_address;
     } else {
       status.className = 'geocode-status err';
-      status.textContent = 'Could not locate address';
+      status.textContent = '⚠ Could not locate address';
     }
   });
 }
@@ -1313,15 +1550,18 @@ function geocodeAddress() {
 function getGPS() {
   const btn = document.getElementById('btn-gps');
   const status = document.getElementById('geocode-status');
+
   if (!navigator.geolocation) {
     status.className = 'geocode-status err';
     status.textContent = 'GPS not supported on this device';
     return;
   }
+
   btn.classList.add('loading');
-  btn.textContent = 'Locating...';
+  btn.textContent = '⏳ Locating…';
   status.className = 'geocode-status loading';
-  status.textContent = 'Getting GPS position...';
+  status.textContent = 'Getting GPS position…';
+
   navigator.geolocation.getCurrentPosition(
     (pos) => {
       const lat = pos.coords.latitude;
@@ -1331,47 +1571,54 @@ function getGPS() {
       mapState.zoom = 19;
       tileCache = {};
       renderTiles();
+
+      // Reverse geocode
       if (mapState.geocoder) {
         mapState.geocoder.geocode({ location: { lat, lng } }, (results, geoStatus) => {
           if (geoStatus === 'OK' && results[0]) {
             document.getElementById('site-address').value = results[0].formatted_address;
             status.className = 'geocode-status ok';
-            status.textContent = 'GPS position confirmed';
+            status.textContent = '✓ GPS position confirmed';
           } else {
             document.getElementById('site-address').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             status.className = 'geocode-status ok';
-            status.textContent = 'GPS: ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+            status.textContent = `✓ GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
           }
         });
       } else {
         document.getElementById('site-address').value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         status.className = 'geocode-status ok';
-        status.textContent = 'GPS captured';
+        status.textContent = '✓ GPS captured';
       }
+
       btn.classList.remove('loading');
-      btn.innerHTML = '<span>&#128205;</span> GPS';
+      btn.innerHTML = '<span>📍</span> GPS';
     },
     (err) => {
       status.className = 'geocode-status err';
-      status.textContent = 'GPS error: ' + err.message;
+      status.textContent = '⚠ GPS error: ' + err.message;
       btn.classList.remove('loading');
-      btn.innerHTML = '<span>&#128205;</span> GPS';
+      btn.innerHTML = '<span>📍</span> GPS';
     },
     { enableHighAccuracy: true, timeout: 15000 }
   );
 }
 
-/* =====================================================
+/* ══════════════════════════════════════════════
    PDF GENERATION
-===================================================== */
+══════════════════════════════════════════════ */
 async function generatePDF() {
   const btn = document.getElementById('btn-pdf');
   btn.disabled = true;
-  showSpinner('CAPTURING MAP...');
+  showSpinner('CAPTURING MAP…');
 
   try {
-    const mapCanvas     = document.getElementById('map-canvas');
-    const overlayCanvas = document.getElementById('overlay-canvas');
+    // 1. Capture map canvas at full res
+    const mapContainer = document.getElementById('map-container');
+    const mapCanvas    = document.getElementById('map-canvas');
+    const overlayCanvas= document.getElementById('overlay-canvas');
+
+    // Composite map + overlay into one canvas
     const composite = document.createElement('canvas');
     composite.width  = mapCanvas.width;
     composite.height = mapCanvas.height;
@@ -1380,114 +1627,134 @@ async function generatePDF() {
     ctx.drawImage(overlayCanvas, 0, 0);
     const mapImage = composite.toDataURL('image/jpeg', 0.92);
 
-    showSpinner('BUILDING REPORT...');
+    showSpinner('BUILDING REPORT…');
+
+    // 2. Collect form data
     const data = collectData();
 
+    // 3. Build PDF using jsPDF
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const PW = 210;
+    const PW = 210; // page width mm
     const PH = 297;
-    const M  = 14;
-    const CW = PW - 2 * M;
+    const M  = 14;  // margin
+    const CW = PW - 2 * M; // content width
+
     let y = M;
 
-    // Header
-    doc.setFillColor(26, 34, 53);
+    // ── Header bar
+    doc.setFillColor(13, 17, 23);
     doc.rect(0, 0, PW, 22, 'F');
-    doc.setFillColor(232, 148, 10);
+    doc.setFillColor(245, 166, 35);
     doc.rect(0, 20, PW, 2, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.setTextColor(232, 148, 10);
+    doc.setTextColor(245, 166, 35);
     doc.text('BIOBLUE AUSTRALIA', M, 13);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(180, 180, 180);
     doc.text('DRIVER SITE AUDIT REPORT', M, 18);
-    doc.text('Generated: ' + new Date().toLocaleString('en-AU'), PW - M, 13, { align: 'right' });
+    doc.setTextColor(180, 180, 180);
+    doc.text(`Generated: ${new Date().toLocaleString('en-AU')}`, PW - M, 13, { align: 'right' });
     doc.text('BioBlue Australia Pty Ltd  |  bioblue.com.au', PW - M, 18, { align: 'right' });
+
     y = 30;
 
-    // S1 Site Info
-    y = pdfSectionHeader(doc, 'S1 - SITE INFORMATION', y, M, CW);
-    y = pdfTwoColTable(doc, [
-      ['Customer / Site', data.siteName || '--'],
-      ['Address',         data.address  || '--'],
-      ['Audit Date',      data.date     || '--'],
-      ['Audit Time',      data.time     || '--'],
-      ['Driver',          data.driver   || '--'],
-      ['BioBlue Contact', data.bdm      || '--'],
-      ['State',           data.state    || '--'],
-    ], y, M, CW);
+    // ── Section: Site Info
+    y = pdfSectionHeader(doc, 'SITE INFORMATION', y, M, CW);
 
-    // S2 Tank C1
-    y = pdfSectionHeader(doc, 'S2 - C.1 ON-SITE STORAGE TANK AUDIT', y, M, CW);
-    y = pdfTwoColTable(doc, [
-      ['Tank ID',           data.tankId       || '--'],
-      ['Tank Serial #',     data.tankSerial   || '--'],
-      ['Owned By',          data.tankOwner    || '--'],
-      ['Tank Type',         data.tankType     || '--'],
-      ['Tank Volume',       data.tankSize     || '--'],
-      ['Safe Fill Level',   data.tankSafeFill || '--'],
-      ['Current Level',     data.tankLevel    || '--'],
-      ['Fill Connection',   (data.fillType || '--') + (data.fillSize ? '  ' + data.fillSize : '')],
-      ['Dip / Monitoring',  data.dipSystem    || '--'],
-      ['Trident Installed', data.trident      || '--'],
-    ], y, M, CW);
+    const infoRows = [
+      ['Customer / Site', data.siteName || '—'],
+      ['Address',         data.address  || '—'],
+      ['Audit Date',      data.date     || '—'],
+      ['Audit Time',      data.time     || '—'],
+      ['Driver',          data.driver   || '—'],
+      ['BioBlue Contact', data.bdm      || '—'],
+      ['State',           data.state    || '—'],
+    ];
+    y = pdfTwoColTable(doc, infoRows, y, M, CW);
 
-    // S3 Checklist
-    if (y > PH - 40) { doc.addPage(); y = M; }
-    y = pdfSectionHeader(doc, 'S3 - SITE CHECKLIST', y, M, CW);
+    // ── Section: Tank C1
+    y = pdfSectionHeader(doc, 'C.1 ON-SITE STORAGE TANK AUDIT', y, M, CW);
+    const tankRows = [
+      ['Tank ID',           data.tankId      || '—'],
+      ['Tank Serial #',     data.tankSerial  || '—'],
+      ['Owned By',          data.tankOwner   || '—'],
+      ['Tank Type',         data.tankType    || '—'],
+      ['Tank Volume',       data.tankSize    || '—'],
+      ['Safe Fill Level',   data.tankSafeFill|| '—'],
+      ['Current Level',     data.tankLevel   || '—'],
+      ['Fill Connection',   (data.fillType || '—') + (data.fillSize ? '  ' + data.fillSize : '')],
+      ['Dip / Monitoring',  data.dipSystem   || '—'],
+      ['Trident Installed', data.trident     || '—'],
+    ];
+    y = pdfTwoColTable(doc, tankRows, y, M, CW);
 
-    const pdfGroupLabels = { ACCESS:'B.1 Truck Access', ENTRY:'B.1 Entry & Gate', SAFETY:'B.2 Site Safety', TANK_QA:'C.1 Tank & Fill Point' };
+    // ── Section: Checklist
+    y = pdfSectionHeader(doc, 'SITE CHECKLIST', y, M, CW);
+
+    const groupLabels = { ACCESS:'🚛 Truck Access', ENTRY:'Entry & Hours', SAFETY:'Site Safety', TANK:'Tank & Fill Point', CONTACT:'Site Contact' };
     let lastGroup = null;
 
     data.checklist.forEach(item => {
       if (y > PH - 30) { doc.addPage(); y = M; }
+
+      // Group heading
       if (item.group !== lastGroup) {
         lastGroup = item.group;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8);
         doc.setTextColor(100, 100, 100);
-        doc.text(pdfGroupLabels[item.group] || item.group, M, y);
+        doc.text((groupLabels[item.group] || item.group).replace(/[^\x00-\x7F]/g, '').trim(), M, y);
         y += 5;
       }
-      const ansColor = item.answer === 'YES' ? [22,163,74] : item.answer === 'NO' ? [220,38,38] : [160,160,160];
+
+      const ansColor = item.answer === 'YES' ? [22,163,74] :
+                       item.answer === 'NO'  ? [220,38,38] : [160,160,160];
       doc.setFillColor(...ansColor);
       doc.rect(M, y, 2.5, 5, 'F');
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
       doc.setTextColor(40, 40, 40);
-      const refTag = item.ref ? '[' + item.ref + ']  ' : '';
+      const refTag = item.ref ? `[${item.ref}]  ` : '';
       const wrapped = doc.splitTextToSize(refTag + item.text, CW - 25);
       doc.text(wrapped, M + 5, y + 4);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(...ansColor);
-      doc.text(item.answer || '--', M + CW - 2, y + 4, { align: 'right' });
+      doc.text(item.answer || '—', M + CW - 2, y + 4, { align: 'right' });
       y += 6 + (wrapped.length - 1) * 4;
+
+      // Sub-answer
       if (item.subAnswer) {
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(8);
         doc.setTextColor(60, 80, 140);
-        const subWrapped = doc.splitTextToSize('  > ' + item.subLabel + ': ' + item.subAnswer, CW - 10);
+        const subWrapped = doc.splitTextToSize(`↳ ${item.subLabel}: ${item.subAnswer}`, CW - 10);
         doc.text(subWrapped, M + 8, y);
         y += subWrapped.length * 4 + 2;
       }
     });
 
-    // S4 Map
+    // ── Section: Map
     if (y > PH - 90) { doc.addPage(); y = M; }
-    y = pdfSectionHeader(doc, 'S4 - SITE MAP & ACCESS', y, M, CW);
-    const mapH = Math.min(CW * (mapCanvas.height / mapCanvas.width), 90);
-    doc.addImage(mapImage, 'JPEG', M, y, CW, mapH);
-    y += mapH + 3;
+    y = pdfSectionHeader(doc, 'SITE MAP & ACCESS', y, M, CW);
+
+    // Map image — full width, 16:9-ish ratio
+    const mapH = CW * (mapCanvas.height / mapCanvas.width);
+    const mapHcapped = Math.min(mapH, 90);
+    doc.addImage(mapImage, 'JPEG', M, y, CW, mapHcapped);
+    y += mapHcapped + 3;
+
+    // Map legend
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(34,197,94);  doc.text('  Entry', M, y);
-    doc.setTextColor(220,38,38);  doc.text('  Exit', M + 24, y);
-    doc.setTextColor(59,130,246); doc.text('  Tank', M + 46, y);
-    doc.setTextColor(232,148,10); doc.text('  Note', M + 68, y);
+    doc.setTextColor(34,197,94);  doc.text('■ Entry Arrow', M, y);
+    doc.setTextColor(239,68,68);  doc.text('■ Exit Arrow', M + 28, y);
+    doc.setTextColor(59,130,246); doc.text('● Tank Position', M + 54, y);
+    doc.setTextColor(245,166,35); doc.text('● Note Marker', M + 86, y);
     y += 5;
+
     if (data.mapNotes) {
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(8.5);
@@ -1497,33 +1764,42 @@ async function generatePDF() {
       y += noteLines.length * 4 + 3;
     }
 
-    // S5 Photos
-    if (photos.some(p => p !== null)) {
+    // ── Section: Photos
+    const hasPhotos = photos.some(p => p !== null);
+    if (hasPhotos) {
       if (y > PH - 60) { doc.addPage(); y = M; }
-      y = pdfSectionHeader(doc, 'S5 - SITE PHOTOS', y, M, CW);
+      y = pdfSectionHeader(doc, 'SITE PHOTOS', y, M, CW);
+
       const photoW = (CW - 6) / 2;
       const photoH = photoW * 0.75;
-      let px2 = M, py2 = y, col = 0;
+      let px2 = M, py2 = y;
+      let col = 0;
+
       for (let i = 0; i < 4; i++) {
         if (photos[i]) {
           if (py2 + photoH > PH - M) { doc.addPage(); py2 = M; }
           doc.addImage(photos[i], 'JPEG', px2, py2, photoW, photoH);
+          // Caption
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(7);
           doc.setTextColor(80,80,80);
           doc.text(PHOTO_LABELS[i], px2 + photoW / 2, py2 + photoH + 3, { align: 'center' });
           col++;
-          if (col % 2 === 0) { px2 = M; py2 += photoH + 8; }
-          else { px2 = M + photoW + 6; }
+          if (col % 2 === 0) {
+            px2 = M;
+            py2 += photoH + 8;
+          } else {
+            px2 = M + photoW + 6;
+          }
         }
       }
       y = py2 + photoH + 10;
     }
 
-    // S6 Notes
+    // ── Section: Notes
     if (data.notes) {
       if (y > PH - 40) { doc.addPage(); y = M; }
-      y = pdfSectionHeader(doc, 'S6 - GENERAL NOTES', y, M, CW);
+      y = pdfSectionHeader(doc, 'GENERAL NOTES', y, M, CW);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
       doc.setTextColor(40,40,40);
@@ -1532,7 +1808,7 @@ async function generatePDF() {
       y += noteLines2.length * 4 + 4;
     }
 
-    // Footer
+    // ── Footer on all pages
     const pageCount = doc.getNumberOfPages();
     for (let p = 1; p <= pageCount; p++) {
       doc.setPage(p);
@@ -1541,13 +1817,14 @@ async function generatePDF() {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(7);
       doc.setTextColor(100,100,100);
-      doc.text('BioBlue Australia Pty Ltd -- Confidential', M, PH - 3);
-      doc.text('Page ' + p + ' of ' + pageCount, PW - M, PH - 3, { align: 'right' });
+      doc.text('BioBlue Australia Pty Ltd — Confidential', M, PH - 3);
+      doc.text(`Page ${p} of ${pageCount}`, PW - M, PH - 3, { align: 'right' });
     }
 
+    // Save
     const safeName = (data.siteName || 'site').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
     const dateStr  = data.date ? data.date.replace(/-/g, '') : 'undated';
-    doc.save('bioblue-driver-audit-' + safeName + '-' + dateStr + '.pdf');
+    doc.save(`bioblue-driver-audit-${safeName}-${dateStr}.pdf`);
 
     hideSpinner();
     btn.disabled = false;
@@ -1560,12 +1837,13 @@ async function generatePDF() {
   }
 }
 
+/* ── PDF helpers ───────────────────────────── */
 function pdfSectionHeader(doc, title, y, M, CW) {
-  doc.setFillColor(232, 148, 10);
+  doc.setFillColor(245, 166, 35);
   doc.rect(M, y, CW, 6.5, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.setTextColor(26, 34, 53);
+  doc.setTextColor(13, 17, 23);
   doc.text(title, M + 3, y + 4.5);
   return y + 10;
 }
@@ -1590,6 +1868,12 @@ function pdfTwoColTable(doc, rows, y, M, CW) {
 
 function collectData() {
   const checklist = CHECKLIST_QUESTIONS.map(q => {
+    // Dropdown question
+    if (q.dropdown) {
+      const el = document.getElementById(`dd-${q.id}`);
+      return { text: q.text, ref: q.ref, group: q.group, answer: el ? el.value || '—' : '—', subAnswer: null, subLabel: null };
+    }
+    // YES/NO/NA question
     const activeBtn = document.querySelector(`.yn-btn.active[data-id="${q.id}"]`);
     const answer = activeBtn ? activeBtn.dataset.val : null;
     let subAnswer = null;
@@ -1600,32 +1884,32 @@ function collectData() {
     return { text: q.text, ref: q.ref, group: q.group, answer, subAnswer, subLabel: q.sub ? q.sub.label : null };
   });
   return {
-    siteName:     document.getElementById('site-name').value.trim(),
-    address:      document.getElementById('site-address').value.trim(),
-    date:         document.getElementById('audit-date').value,
-    time:         document.getElementById('audit-time').value,
-    driver:       document.getElementById('driver-name').value.trim(),
-    bdm:          document.getElementById('bdm-name').value.trim(),
-    state:        document.getElementById('state-select').value,
-    tankId:       document.getElementById('tank-id').value.trim(),
-    tankSerial:   document.getElementById('tank-serial').value.trim(),
-    tankOwner:    document.getElementById('tank-owner').value,
-    tankType:     document.getElementById('tank-type').value,
-    tankSize:     document.getElementById('tank-size').value,
-    tankSafeFill: document.getElementById('tank-safe-fill').value.trim(),
-    tankLevel:    document.getElementById('tank-level').value.trim(),
-    fillType:     document.getElementById('fill-type').value,
-    fillSize:     document.getElementById('fill-size').value,
-    dipSystem:    document.getElementById('dip-system').value.trim(),
-    trident:      document.getElementById('trident').value,
+    siteName:    document.getElementById('site-name').value.trim(),
+    address:     document.getElementById('site-address').value.trim(),
+    date:        document.getElementById('audit-date').value,
+    time:        document.getElementById('audit-time').value,
+    driver:      document.getElementById('driver-name').value.trim(),
+    bdm:         document.getElementById('bdm-name').value.trim(),
+    state:       document.getElementById('state-select').value,
+    tankId:      document.getElementById('tank-id').value.trim(),
+    tankSerial:  document.getElementById('tank-serial').value.trim(),
+    tankOwner:   document.getElementById('tank-owner').value,
+    tankType:    document.getElementById('tank-type').value,
+    tankSize:    document.getElementById('tank-size').value,
+    tankSafeFill:document.getElementById('tank-safe-fill').value.trim(),
+    tankLevel:   document.getElementById('tank-level').value.trim(),
+    fillType:    document.getElementById('fill-type').value,
+    fillSize:    document.getElementById('fill-size').value,
+    dipSystem:   document.getElementById('dip-system').value.trim(),
+    trident:     document.getElementById('trident').value,
     checklist,
-    mapNotes:     document.getElementById('map-notes').value.trim(),
-    notes:        document.getElementById('general-notes').value.trim(),
+    mapNotes:    document.getElementById('map-notes').value.trim(),
+    notes:       document.getElementById('general-notes').value.trim(),
   };
 }
 
 function showSpinner(msg) {
-  document.getElementById('spinner-text').textContent = msg || 'WORKING...';
+  document.getElementById('spinner-text').textContent = msg || 'WORKING…';
   document.getElementById('spinner').classList.add('active');
 }
 function hideSpinner() {
@@ -1633,5 +1917,11 @@ function hideSpinner() {
 }
 
 </script>
+
+<!-- Load Maps API -->
+<script>
+// Maps loaded in loadMapsAPI() after DOM ready
+</script>
+
 </body>
 </html>
