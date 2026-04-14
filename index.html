@@ -280,6 +280,9 @@
     width: 100%;
     height: 400px;
     background: #e2e8f0;
+    cursor: grab;
+  }
+  #map-container.annotating {
     cursor: crosshair;
   }
 
@@ -731,6 +734,9 @@
 
     <!-- Toolbar -->
     <div class="map-toolbar">
+      <button class="btn-map active" id="tool-pan" onclick="setTool('pan')" title="Pan / move map">
+        &#128400; Pan
+      </button>
       <button class="btn-map" id="tool-entry" onclick="setTool('entry')" title="Draw entry arrow">
         🟢 Entry
       </button>
@@ -742,6 +748,9 @@
       </button>
       <button class="btn-map" id="tool-note" onclick="setTool('note')" title="Add text note">
         📝 Note
+      </button>
+      <button class="btn-map" onclick="undoAnnotation()" title="Undo last annotation">
+        ↩ Undo
       </button>
       <button class="btn-map danger" id="tool-erase" onclick="clearAnnotations()">
         🗑 Clear
@@ -761,7 +770,7 @@
 
       <!-- Hint bar -->
       <div class="map-hint" id="map-hint">
-        Tap <span>Entry / Exit / Tank</span> then tap map to place
+        <span>Pan</span> active — drag to move map, or tap a tool above
       </div>
     </div>
 
@@ -905,11 +914,10 @@ let mapState = {
   zoom: 17,
   loaded: false,
   geocoder: null,
-  annotations: [],   // { type, lat, lng, label? }
-  activeTool: null,
-  dragging: false,
+  annotations: [],
+  activeTool: null,   // null = pan mode (default)
   dragStart: null,
-  arrowStart: null,  // for two-tap arrow mode
+  arrowStart: null,
 };
 
 let photos = [null, null, null, null];
@@ -1355,41 +1363,28 @@ function setupMapInteraction() {
   let panStartLatLng = null;
   let touchStartDist = null;
   let touchStartZoom = null;
-  let lastTouchTime = 0;
-  let holdTimeout = null;
 
-  // Pointer / mouse — panning + tap annotation
   container.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     isPanning = true;
     panStart = { x: e.clientX, y: e.clientY };
     panStartLatLng = { lat: mapState.lat, lng: mapState.lng };
+    if (mapState.activeTool === null) {
+      container.style.cursor = 'grabbing';
+    }
   }, { passive: false });
 
   container.addEventListener('pointermove', (e) => {
     if (!isPanning) return;
     const dx = e.clientX - panStart.x;
     const dy = e.clientY - panStart.y;
-
-    // Pan the map
-    const W = container.clientWidth;
-    const H = container.clientHeight;
     const TILE = 256;
     const scale = Math.pow(2, mapState.zoom);
     const lngPerPx = 360 / (scale * TILE);
-    const latPerPx = (panStartLatLng.lat) => {
-      const rad = panStartLatLng.lat * Math.PI / 180;
-      return (360 / (scale * TILE)) / Math.cos(rad);
-    };
     mapState.lng = panStartLatLng.lng - dx * lngPerPx;
     const latRad = panStartLatLng.lat * Math.PI / 180;
-    const metersPerPx = 156543.03392 * Math.cos(latRad) / scale;
-    // Approximate lat from dy
     mapState.lat = panStartLatLng.lat + dy * (180 / Math.PI) / (6378137) * (TILE * scale / 256);
-
-    // Quick redraw during pan (just move canvas)
-    document.getElementById('map-canvas').style.transform =
-      `translate(${dx}px, ${dy}px)`;
+    document.getElementById('map-canvas').style.transform = `translate(${dx}px, ${dy}px)`;
     renderOverlay();
   }, { passive: true });
 
@@ -1401,15 +1396,21 @@ function setupMapInteraction() {
     const dy = e.clientY - panStart.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    // Reset canvas transform
     document.getElementById('map-canvas').style.transform = '';
 
+    // Restore cursor
+    if (mapState.activeTool === null) {
+      container.style.cursor = 'grab';
+    }
+
     if (dist > 8) {
-      // It was a pan — commit and re-render
+      // Pan gesture — commit and re-render tiles
       renderTiles();
     } else {
-      // It was a tap — place annotation
-      handleMapTap(e.clientX, e.clientY);
+      // Tap — only place annotation if an annotation tool is active
+      if (mapState.activeTool !== null) {
+        handleMapTap(e.clientX, e.clientY);
+      }
     }
   });
 
@@ -1418,7 +1419,7 @@ function setupMapInteraction() {
     if (e.touches.length === 2) {
       touchStartDist = getTouchDist(e);
       touchStartZoom = mapState.zoom;
-      isPanning = false; // cancel pan during pinch
+      isPanning = false;
     }
   }, { passive: true });
 
@@ -1446,24 +1447,35 @@ function getTouchDist(e) {
 let pendingArrowStart = null; // for entry/exit two-tap mode
 
 function setTool(tool) {
-  mapState.activeTool = tool;
+  mapState.activeTool = tool === 'pan' ? null : tool;
   pendingArrowStart = null;
 
   // Update button states
-  ['entry','exit','tank','note'].forEach(t => {
+  ['pan','entry','exit','tank','note'].forEach(t => {
     const btn = document.getElementById(`tool-${t}`);
     if (btn) btn.classList.toggle('active', t === tool);
   });
 
+  // Cursor
+  const container = document.getElementById('map-container');
+  if (tool === 'pan') {
+    container.classList.remove('annotating');
+    container.style.cursor = 'grab';
+  } else {
+    container.classList.add('annotating');
+    container.style.cursor = 'crosshair';
+  }
+
   // Update hint
   const hints = {
-    entry: 'Tap start then end point to draw <span>Entry arrow</span>',
-    exit:  'Tap start then end point to draw <span>Exit arrow</span>',
-    tank:  'Tap to place the <span>Tank marker</span>',
-    note:  'Tap to add a <span>Note marker</span>',
+    pan:   '<span>Pan</span> active — drag to move map, or tap a tool above',
+    entry: 'Tap <span>start</span> then <span>end point</span> to draw Entry arrow',
+    exit:  'Tap <span>start</span> then <span>end point</span> to draw Exit arrow',
+    tank:  'Tap map to place the <span>Tank marker</span>',
+    note:  'Tap map to add a <span>Note marker</span>',
   };
   document.getElementById('map-hint').innerHTML =
-    hints[tool] || 'Tap <span>Entry / Exit / Tank</span> then tap map to place';
+    hints[tool] || hints['pan'];
 }
 
 function handleMapTap(clientX, clientY) {
@@ -1481,10 +1493,13 @@ function handleMapTap(clientX, clientY) {
 
   if (tool === 'entry' || tool === 'exit') {
     if (!pendingArrowStart) {
+      // First tap — mark start, no history save yet
       pendingArrowStart = { lat, lng };
       document.getElementById('map-hint').innerHTML =
         `Now tap <span>end point</span> for the ${tool} arrow`;
     } else {
+      // Second tap — commit arrow
+      saveAnnotationState();
       mapState.annotations.push({
         type: tool,
         fromLat: pendingArrowStart.lat,
@@ -1495,12 +1510,13 @@ function handleMapTap(clientX, clientY) {
       renderOverlay();
     }
   } else if (tool === 'tank') {
-    // Only one tank marker — replace existing
+    saveAnnotationState();
     mapState.annotations = mapState.annotations.filter(a => a.type !== 'tank');
     mapState.annotations.push({ type: 'tank', lat, lng });
     renderOverlay();
   } else if (tool === 'note') {
     const label = prompt('Enter note label (short):') || 'Note';
+    saveAnnotationState();
     mapState.annotations.push({ type: 'note', lat, lng, label });
     renderOverlay();
   }
@@ -1508,8 +1524,31 @@ function handleMapTap(clientX, clientY) {
 
 function clearAnnotations() {
   if (!confirm('Clear all map annotations?')) return;
+  annotationHistory = [];
   mapState.annotations = [];
   pendingArrowStart = null;
+  renderOverlay();
+}
+
+/* Undo history — stores snapshots of annotations array */
+let annotationHistory = [];
+
+function saveAnnotationState() {
+  // Deep copy the annotations array before each change
+  annotationHistory.push(JSON.parse(JSON.stringify(mapState.annotations)));
+  if (annotationHistory.length > 30) annotationHistory.shift();
+}
+
+function undoAnnotation() {
+  if (pendingArrowStart) {
+    // Cancel a pending first-tap without removing anything
+    pendingArrowStart = null;
+    setTool(mapState.activeTool === null ? 'pan' :
+      Object.keys({entry:1,exit:1,tank:1,note:1}).find(t => t === mapState.activeTool) || 'pan');
+    return;
+  }
+  if (annotationHistory.length === 0) return;
+  mapState.annotations = annotationHistory.pop();
   renderOverlay();
 }
 
