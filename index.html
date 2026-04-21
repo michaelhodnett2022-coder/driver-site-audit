@@ -610,14 +610,32 @@
 
 
   <!-- ═══════════════════════════════════════════════════════
-       SECTION S2 — C.1 ON-SITE STORAGE TANK AUDIT
-       Fields: S2-F4 Tank Type, S2-F5 Tank Size, S2-F6 Safe Fill,
-               S2-F8 Fill Connection Type,
-               S2-F11 Level Indicator (YES/NO + type dropdown)
+       SECTION S2 — SITE CHECKLIST
+       Questions defined in CHECKLIST_QUESTIONS array in JS.
+       To add/edit/remove questions, find that array in the
+       <script> block — each question has an id, ref, group,
+       and text property.
+       Groups: ACCESS (B.1), ENTRY (B.1), SAFETY (B.2), TANK_QA (C.1)
   ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s2">
     <div class="section-header">
       <span class="section-num">S2</span>
+      <span class="section-title">Site Checklist</span>
+    </div>
+    <div class="section-body" id="checklist-body">
+      <!-- Rendered by buildChecklist() in JS -->
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION S3 — C.1 ON-SITE STORAGE TANK AUDIT
+       Fields: S2-F4 Tank Type, S2-F5 Tank Size, S2-F6 Safe Fill,
+               S2-F8 Fill Connection Type,
+               S2-F11 Level Indicator (YES/NO + type dropdown)
+  ═══════════════════════════════════════════════════════ -->
+  <div class="section-card" id="section-s3">
+    <div class="section-header">
+      <span class="section-num">S3</span>
       <span class="section-title">C.1 On-Site Storage Tank Audit</span>
     </div>
     <div class="section-body">
@@ -747,24 +765,6 @@
     </div>
   </div>
 
-
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION S3 — SITE CHECKLIST
-       Questions defined in CHECKLIST_QUESTIONS array in JS.
-       To add/edit/remove questions, find that array in the
-       <script> block — each question has an id, ref, group,
-       and text property.
-       Groups: ACCESS (B.1), ENTRY (B.1), SAFETY (B.2), TANK_QA (C.1)
-  ═══════════════════════════════════════════════════════ -->
-  <div class="section-card" id="section-s3">
-    <div class="section-header">
-      <span class="section-num">S3</span>
-      <span class="section-title">Site Checklist</span>
-    </div>
-    <div class="section-body" id="checklist-body">
-      <!-- Rendered by buildChecklist() in JS -->
-    </div>
-  </div>
 
   <!-- ═══════════════════════════════════════════════════════
        SECTION S4 — SITE MAP & ACCESS
