@@ -39,10 +39,11 @@
     --amber:   #e8940a;
     --amber-d: #c4780a;
     --amber-bg:#fff8ed;
-    --blue:    #2563eb;
+    --blue:    #1e78be;
+    --navy:    #1a2235;
     --green:   #16a34a;
     --red:     #dc2626;
-    --text:    #111827;
+    --text:    #1a2235;
     --text-2:  #374151;
     --muted:   #6b7280;
     --label:   #4b5563;
@@ -254,7 +255,119 @@
     gap: 10px;
   }
 
-  /* ─── MAP SECTION ─────────────────────────────────── */
+  /* ─── CHECKLIST ──────────────────────────────────── */
+  .checklist-group-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 0 10px;
+    margin-top: 6px;
+    border-bottom: 1px solid var(--border-l);
+    margin-bottom: 14px;
+  }
+  .yn-ref {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-right: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── PHOTO SLOTS (new system) ───────────────────── */
+  .photo-slot-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--navy);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--amber-bg);
+    border-bottom: 1px solid var(--border-l);
+    padding: 5px 8px;
+    border-radius: 6px 6px 0 0;
+  }
+  .photo-slot-inner {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 100%;
+  }
+  .photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--muted);
+    padding: 16px;
+  }
+  .photo-slot {
+    background: #f9fafb;
+    border: 1.5px solid var(--border-l);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .photo-slot:hover { border-color: var(--amber); }
+
+  /* ─── GEOCODE STATUS ─────────────────────────────── */
+  .geocode-status { font-family: var(--mono); font-size: 11px; min-height: 16px; margin-top: 3px; }
+  .geocode-status.loading { color: var(--amber); }
+  .geocode-status.ok      { color: var(--green); }
+  .geocode-status.err     { color: var(--red); }
+
+  /* ─── SPINNER ────────────────────────────────────── */
+  .spinner-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,34,53,0.75);
+    z-index: 999; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+  }
+  .spinner-overlay.active { display: flex; }
+  .spinner-ring {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(232,148,10,0.25);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner-text { font-family: var(--mono); font-size: 12px; color: #cbd5e1; letter-spacing: 0.1em; }
+
+  /* ─── PDF BUTTON ─────────────────────────────────── */
+  .btn-pdf {
+    background: var(--amber);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 20px;
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-pdf:active { background: var(--amber-d); transform: scale(0.98); }
+
+  /* ─── TANK QA DIVIDER ────────────────────────────── */
+  .tank-qa-divider {
+    border-top: 1px solid var(--border-l);
+    margin: 14px 0;
+    padding-top: 14px;
+  }
   .map-toolbar {
     display: flex;
     gap: 8px;
@@ -966,8 +1079,152 @@ const CHECKLIST_QUESTIONS = [
 ];
 
 /* ══════════════════════════════════════════════
-   STATE
+   CLOCK & DATES
 ══════════════════════════════════════════════ */
+function initClock() {
+  function tick() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const el = document.getElementById('clock');
+    if (el) el.textContent = hh + ':' + mm;
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const d2 = document.getElementById('today-date');
+    if (d2) d2.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+  }
+  tick();
+  setInterval(tick, 10000);
+}
+
+function initDates() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm   = String(now.getMonth() + 1).padStart(2, '0');
+  const dd   = String(now.getDate()).padStart(2, '0');
+  const el = document.getElementById('audit-date');
+  if (el) el.value = yyyy + '-' + mm + '-' + dd;
+}
+
+/* ══════════════════════════════════════════════
+   CHECKLIST BUILDER
+══════════════════════════════════════════════ */
+function buildChecklist() {
+  const body = document.getElementById('checklist-body');
+  if (!body) return;
+  const groups = {};
+  CHECKLIST_QUESTIONS.forEach(q => {
+    if (!groups[q.group]) groups[q.group] = [];
+    groups[q.group].push(q);
+  });
+
+  const groupLabels = {
+    ACCESS:  'B.1 Truck Access',
+    ENTRY:   'B.1 Entry & Gate Access',
+    SAFETY:  'B.2 Site Safety',
+    TANK_QA: 'C.1 Tank & Fill Point Checks',
+  };
+
+  Object.entries(groups).forEach(([groupKey, questions]) => {
+    const heading = document.createElement('div');
+    heading.className = 'checklist-group-label';
+    heading.textContent = (groupLabels[groupKey] || groupKey);
+    body.appendChild(heading);
+
+    questions.forEach(q => {
+      const div = document.createElement('div');
+      div.className = 'yn-question';
+
+      // DROPDOWN type
+      if (q.dropdown) {
+        const opts = q.dropdown.map(o => '<option value="' + o + '">' + o + '</option>').join('');
+        div.innerHTML = '<div class="yn-label"><span class="yn-ref">' + q.ref + '</span>' + q.text + '</div>'
+          + '<select id="dd-' + q.id + '" style="margin-top:6px;"><option value="">Select…</option>' + opts + '</select>';
+        body.appendChild(div);
+        return;
+      }
+
+      // YES/NO/NA buttons
+      const naBtn = q.yna
+        ? '<button class="yn-btn na" data-id="' + q.id + '" data-val="N/A" onclick="setYN(this)">N/A</button>'
+        : '';
+
+      let subHtml = '';
+      if (q.sub) {
+        subHtml = '<div class="yn-sub" id="sub-' + q.id + '" style="display:none;">'
+          + '<div class="field-group"><label>' + q.sub.label + '</label>'
+          + '<input type="text" id="' + q.sub.id + '" placeholder="' + (q.sub.placeholder || '') + '"></div></div>';
+      }
+
+      div.innerHTML = '<div class="yn-label"><span class="yn-ref">' + q.ref + '</span>' + q.text + '</div>'
+        + '<div class="yn-btns">'
+        + '<button class="yn-btn yes" data-id="' + q.id + '" data-val="YES" onclick="setYN(this)">YES</button>'
+        + '<button class="yn-btn no"  data-id="' + q.id + '" data-val="NO"  onclick="setYN(this)">NO</button>'
+        + naBtn + '</div>' + subHtml;
+      body.appendChild(div);
+    });
+  });
+}
+
+function setYN(btn) {
+  const id  = btn.dataset.id;
+  const val = btn.dataset.val;
+  const parent = btn.closest('.yn-question');
+  parent.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Show/hide sub-field
+  const q = CHECKLIST_QUESTIONS.find(q => q.id === id);
+  if (q && q.sub) {
+    const sub = document.getElementById('sub-' + id);
+    if (sub) sub.style.display = (val === q.triggerVal) ? 'block' : 'none';
+  }
+}
+
+/* ══════════════════════════════════════════════
+   PHOTOS
+══════════════════════════════════════════════ */
+let photoStore = [];
+
+function buildPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  PHOTO_LABELS.forEach((label, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'photo-slot';
+    slot.id = 'slot-' + i;
+    slot.innerHTML = '<div class="photo-slot-label">' + label + '</div>'
+      + '<label class="photo-slot-inner">'
+      + '<input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this,' + i + ')" style="display:none;">'
+      + '<div class="photo-placeholder"><span style="font-size:28px;">📷</span><span style="font-size:11px;margin-top:4px;">Tap to capture</span></div>'
+      + '</label>';
+    grid.appendChild(slot);
+  });
+}
+
+function handlePhoto(input, idx) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    photoStore[idx] = { dataUrl: e.target.result, label: PHOTO_LABELS[idx] };
+    const slot = document.getElementById('slot-' + idx);
+    if (!slot) return;
+    slot.innerHTML = '<div class="photo-slot-label">' + PHOTO_LABELS[idx] + '</div>'
+      + '<div class="photo-slot-inner" style="position:relative;">'
+      + '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">'
+      + '<button onclick="removePhoto(' + idx + ')" style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.9);color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:13px;cursor:pointer;line-height:1;">×</button>'
+      + '</div>';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(idx) {
+  photoStore[idx] = null;
+  buildPhotoGrid();
+}
+
+
 /* ══════════════════════════════════════════════
    MAP — exact V1 Viva audit implementation
 ══════════════════════════════════════════════ */
@@ -1428,25 +1685,12 @@ function getMudmapDataUrl() {
   return out.toDataURL('image/jpeg', 0.9);
 }
 
-function syncMudmapAddress() {
-  const addr = [
-    document.getElementById('site-address')?.value,
-    document.getElementById('site-address')?.value ? '' : '',
-  ].filter(Boolean).join(', ');
-  const el = document.getElementById('mudmapAddress');
-  if (el && document.getElementById('site-address')?.value) {
-    el.value = document.getElementById('site-address').value;
-  }
-}
-
 
 /* ══════════════════════════════════════════════
    GEOCODING
 ══════════════════════════════════════════════ */
 function geocodeAddress() {
-  const addr = document.getElementById('site-address').value.trim();
-  if (!addr) return;
-  // Sync address to mudmap field and auto-load satellite
+  // Called on address field change — syncs to mud map field
   syncMudmapAddress();
 }
 
@@ -1863,11 +2107,33 @@ function setFillLock(val) {
   if (val === 'NO') document.getElementById('filllock-detail').value = '';
 }
 
-</script>
+/* ══════════════════════════════════════════════
+   SYNC MUDMAP ADDRESS from S1 address field
+══════════════════════════════════════════════ */
+function syncMudmapAddress() {
+  const addr = document.getElementById('site-address');
+  const mapAddr = document.getElementById('mudmapAddress');
+  if (addr && mapAddr && addr.value.trim()) {
+    mapAddr.value = addr.value.trim();
+  }
+}
 
-<!-- Load Maps API -->
-<script>
-// Maps loaded in loadMapsAPI() after DOM ready
+/* ══════════════════════════════════════════════
+   INIT — called on DOM ready
+══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initClock();
+  initDates();
+  buildChecklist();
+  buildPhotoGrid();
+  initMudmap();
+  setMudmapTool('pen');
+
+  // Sync address field to mud map on change
+  const addrEl = document.getElementById('site-address');
+  if (addrEl) addrEl.addEventListener('change', syncMudmapAddress);
+});
+
 </script>
 
 </body>
