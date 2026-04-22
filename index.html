@@ -427,6 +427,43 @@
   .geocode-status.err     { color: var(--red); }
   .geocode-status.loading { color: var(--amber); }
 
+  /* ─── CHECKBOXES ─────────────────────────────────── */
+  .cb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-2);
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border-l);
+    background: #fafbfc;
+    transition: all 0.12s;
+  }
+  .cb-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--blue);
+    cursor: pointer;
+    flex-shrink: 0;
+    border: none;
+    border-left: none;
+    border-radius: 0;
+    padding: 0;
+    background: none;
+  }
+  .cb-item:has(input:checked) {
+    background: var(--blue-lt);
+    border-color: var(--blue);
+    color: var(--navy);
+    font-weight: 500;
+  }
+
   /* ─── PLACES AUTOCOMPLETE ────────────────────────── */
   .places-item {
     padding: 10px 12px;
@@ -593,19 +630,25 @@
   <div class="section-card" id="section-s3">
     <div class="section-header">
       <span class="section-num">3</span>
-      <span class="section-title">C.1 On-Site Storage Tank Audit</span>
+      <span class="section-title">On-Site Storage Tank Audit</span>
     </div>
     <div class="section-body">
+      <!-- Tank Location Description — top of section -->
+      <div class="field-group" style="margin-bottom:14px;">
+        <label>Tank Location Description</label>
+        <textarea id="fill-point-location" rows="2" placeholder="e.g. Tank is behind the main shed, left of the forklift bay. Fill point faces east — approach from the driveway."></textarea>
+      </div>
+
       <div class="field-row">
         <div class="field-group">
-          <label>Tank Type</label>
-          <select id="tank-type">
-            <option value="">Select…</option>
-            <option>Poly Slim</option>
-            <option>Poly Round</option>
-            <option>In Ground</option>
-            <option>Cabinet Type</option>
-          </select>
+          <label>Tank Type <span style="font-size:9px;color:var(--muted);font-weight:400;">(select all that apply)</span></label>
+          <div id="tank-type-boxes" style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+            <label class="cb-item"><input type="checkbox" name="tank-type" value="Poly Slim"> Poly Slim</label>
+            <label class="cb-item"><input type="checkbox" name="tank-type" value="Poly Round"> Poly Round</label>
+            <label class="cb-item"><input type="checkbox" name="tank-type" value="In Ground"> In Ground</label>
+            <label class="cb-item"><input type="checkbox" name="tank-type" value="Cabinet Type"> Cabinet Type</label>
+            <label class="cb-item"><input type="checkbox" name="tank-type" value="Onsite IBC"> Onsite IBC</label>
+          </div>
         </div>
         <div class="field-group">
           <label>Tank Size</label>
@@ -659,18 +702,12 @@
         </div>
       </div>
 
-      <!-- S2-F12 Fill point location -->
-      <div class="field-group" style="margin-top:14px;">
-        <label>Fill Point Location Description</label>
-        <textarea id="fill-point-location" rows="2" placeholder="e.g. Tank is behind the main shed, left of the forklift bay. Fill point faces east — approach from the driveway."></textarea>
-      </div>
-
       <!-- S2-F13 Fill point locked -->
       <div class="field-group" style="margin-top:10px;">
         <label>Is the fill point locked or restricted?</label>
         <div class="yn-btns" style="margin-top:6px;display:flex;gap:8px;">
-          <button class="yn-btn yes" id="filllock-yes" onclick="setFillLock('YES')" style="flex:1;">YES</button>
-          <button class="yn-btn no"  id="filllock-no"  onclick="setFillLock('NO')"  style="flex:1;">NO</button>
+          <button class="yn-btn no"  id="filllock-yes" onclick="setFillLock('YES')" style="flex:1;">YES</button>
+          <button class="yn-btn yes" id="filllock-no"  onclick="setFillLock('NO')"  style="flex:1;">NO</button>
         </div>
         <div id="filllock-detail-wrap" style="display:none;margin-top:10px;">
           <div class="field-group">
@@ -906,25 +943,23 @@ const CHECKLIST_QUESTIONS = [
 
   // ── B.1 ENTRY & GATE ACCESS ───────────────────────────
   /* Q7  */ { id: 'q6',  ref: 'Q7',  text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ENTRY',
-    sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES' },
-  /* Q8  */ { id: 'q7b', ref: 'Q8',  text: 'Is there a weighbridge or security checkpoint the driver must pass through?', group: 'ENTRY',
-    sub: { id: 'q7b-detail', label: 'Provide details', placeholder: 'e.g. Weigh in and out at gatehouse, report to security with delivery docket' }, triggerVal: 'YES' },
+    sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES', reverseColor: true },
 
   // ── B.2 SITE SAFETY ───────────────────────────────────
-  /* Q9  */ { id: 'q7',  ref: 'Q9',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
+  /* Q8  */ { id: 'q7',  ref: 'Q8',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
     sub: { id: 'q7-induct', label: 'What type of induction is required?', placeholder: '' }, triggerVal: 'YES',
-    dropdown2: { id: 'q7-type', parentId: 'q7', options: ['Sign-in book only', 'Online induction required', 'Full site induction (allow extra time)', 'Call ahead required'] } },
-  /* Q10 */ { id: 'q10', ref: 'Q10', text: 'Is adequate lighting available for early morning or evening deliveries?', group: 'SAFETY',
+    multicheck: { id: 'q7-type', options: ['Sign-in book only', 'Online induction required', 'Full site induction (allow extra time)', 'Call ahead required'] } },
+  /* Q9  */ { id: 'q10', ref: 'Q9',  text: 'Is adequate lighting available for early morning or evening deliveries?', group: 'SAFETY',
     sub: { id: 'q10-lighting', label: 'What arrangement is needed?', placeholder: 'e.g. Driver must bring own torch, day shift deliveries only (6am–4pm)' }, triggerVal: 'NO' },
-  /* Q11 */ { id: 'q13', ref: 'Q11', text: 'Does this site require PPE beyond standard hi-vis and steel cap boots?', group: 'SAFETY',
+  /* Q10 */ { id: 'q13', ref: 'Q10', text: 'Does this site require PPE beyond standard hi-vis and steel cap boots?', group: 'SAFETY',
     sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hard hat, safety glasses, fire-retardant clothing' }, triggerVal: 'YES' },
-  /* Q12 */ { id: 'q15', ref: 'Q12', text: 'Is the site contact reliably reachable during deliveries?', group: 'SAFETY',
+  /* Q11 */ { id: 'q15', ref: 'Q11', text: 'Is the site contact reliably reachable during deliveries?', group: 'SAFETY',
     sub: { id: 'q15-alt', label: 'Who else can be contacted on site?', placeholder: 'e.g. If John unavailable, call site office on 08 9000 0000' }, triggerVal: 'NO' },
-  /* Q13 */ { id: 'q14', ref: 'Q13', text: 'Do you have any concerns about this delivery that the next driver should be aware of?', group: 'SAFETY',
+  /* Q12 */ { id: 'q14', ref: 'Q12', text: 'Do you have any concerns about this delivery that the next driver should be aware of?', group: 'SAFETY',
     sub: { id: 'q14-concerns', label: 'Provide details', placeholder: 'e.g. Narrow entry, low clearance at rear gate, site dogs on property, aggressive geese' }, triggerVal: 'YES' },
 
-  // ── C.1 TANK & FILL POINT CHECKS — rendered directly in S3 section
-  // C1-Q20, C1-Q21, C1-Q22 are rendered directly in S3 (above the checklist)
+  // ── TANK & FILL POINT CHECKS — rendered directly in S3 section
+  // Q14, Q15, Q16 are rendered directly in S3
 
 ];
 
@@ -1001,22 +1036,31 @@ function buildChecklist() {
 
       let subHtml = '';
       if (q.sub) {
-        // Check if there's a secondary dropdown inside the sub field
-        const innerDropdown = q.dropdown2
-          ? '<div class="field-group" style="margin-top:8px;"><label>Type</label><select id="' + q.dropdown2.id + '"><option value="">Select\u2026</option>'
-            + q.dropdown2.options.map(o => '<option>' + o + '</option>').join('') + '</select></div>'
-          : '';
+        // multicheck (e.g. induction type — tick all that apply)
+        let innerContent = '';
+        if (q.multicheck) {
+          innerContent = '<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">'
+            + q.multicheck.options.map(o =>
+                '<label class="cb-item"><input type="checkbox" name="' + q.multicheck.id + '" value="' + o + '"> ' + o + '</label>'
+              ).join('')
+            + '</div>';
+        } else if (q.sub.placeholder) {
+          innerContent = '<input type="text" id="' + q.sub.id + '" placeholder="' + q.sub.placeholder + '" style="margin-top:5px;">';
+        }
         subHtml = '<div class="yn-sub" id="sub-' + q.id + '" style="display:none;">'
           + '<div class="field-group"><label>' + q.sub.label + '</label>'
-          + (q.sub.placeholder ? '<input type="text" id="' + q.sub.id + '" placeholder="' + q.sub.placeholder + '">' : '')
-          + innerDropdown
+          + innerContent
           + '</div></div>';
       }
 
+      // Swap YES/NO colours for questions where YES = bad (reverseColor)
+      const yesClass = q.reverseColor ? 'yn-btn no'  : 'yn-btn yes';
+      const noClass  = q.reverseColor ? 'yn-btn yes' : 'yn-btn no';
+
       div.innerHTML = '<div class="yn-label"><span class="yn-ref">' + q.ref + '</span>' + q.text + '</div>'
         + '<div class="yn-btns">'
-        + '<button class="yn-btn yes" data-id="' + q.id + '" data-val="YES" onclick="setYN(this)">YES</button>'
-        + '<button class="yn-btn no"  data-id="' + q.id + '" data-val="NO"  onclick="setYN(this)">NO</button>'
+        + '<button class="' + yesClass + '" data-id="' + q.id + '" data-val="YES" onclick="setYN(this)">YES</button>'
+        + '<button class="' + noClass  + '" data-id="' + q.id + '" data-val="NO"  onclick="setYN(this)">NO</button>'
         + naBtn + '</div>' + subHtml;
       body.appendChild(div);
     });
@@ -1894,22 +1938,22 @@ function pdfTwoColTable(doc, rows, y, M, CW) {
 
 function collectData() {
   const checklist = CHECKLIST_QUESTIONS.map(q => {
-    // Dropdown question
     if (q.dropdown) {
       const el = document.getElementById('dd-' + q.id);
       return { text: q.text, ref: q.ref, group: q.group, answer: el ? el.value || '—' : '—', subAnswer: null, subLabel: null };
     }
-    // YES/NO/NA question
     const activeBtn = document.querySelector('.yn-btn.active[data-id="' + q.id + '"]');
     const answer = activeBtn ? activeBtn.dataset.val : null;
     let subAnswer = null;
     if (q.sub) {
-      // Text sub-field
-      if (q.sub.placeholder) {
+      if (q.multicheck) {
+        // Gather all checked options
+        const checked = Array.from(document.querySelectorAll('input[name="' + q.multicheck.id + '"]:checked')).map(c => c.value);
+        subAnswer = checked.length ? checked.join(', ') : null;
+      } else if (q.sub.placeholder) {
         const subEl = document.getElementById(q.sub.id);
         if (subEl) subAnswer = subEl.value.trim() || null;
       }
-      // dropdown2 (e.g. induction type)
       if (q.dropdown2) {
         const ddEl = document.getElementById(q.dropdown2.id);
         const ddVal = ddEl ? ddEl.value.trim() : null;
@@ -1918,6 +1962,10 @@ function collectData() {
     }
     return { text: q.text, ref: q.ref, group: q.group, answer, subAnswer, subLabel: q.sub ? q.sub.label : null };
   });
+
+  // Tank type — gather all checked boxes
+  const tankTypeChecked = Array.from(document.querySelectorAll('input[name="tank-type"]:checked')).map(c => c.value);
+
   return {
     siteName:          document.getElementById('site-name').value.trim(),
     address:           document.getElementById('site-address').value.trim(),
@@ -1926,7 +1974,7 @@ function collectData() {
     state:             document.getElementById('state-select').value,
     siteContactName:   document.getElementById('site-contact-name').value.trim(),
     siteContactMobile: document.getElementById('site-contact-mobile').value.trim(),
-    tankType:          document.getElementById('tank-type').value,
+    tankType:          tankTypeChecked.join(', ') || '—',
     tankSize:          document.getElementById('tank-size').value,
     tankSafeFill:      document.getElementById('tank-safe-fill').value.trim(),
     fillType:          document.getElementById('fill-type').value,
@@ -1989,7 +2037,7 @@ function placesAutocomplete(input) {
     const GMAPS_KEY = 'AIzaSyBb-EHe4hw-UmY9xFNRDMwbf-A27S2WbPQ';
     fetch('https://maps.googleapis.com/maps/api/place/autocomplete/json?input='
       + encodeURIComponent(query)
-      + '&components=country:au&types=address&key=' + GMAPS_KEY)
+      + '&components=country:au&types=address&language=en&key=' + GMAPS_KEY)
     .then(r => r.json())
     .then(data => {
       if (!data.predictions || data.predictions.length === 0) {
@@ -2045,12 +2093,20 @@ function selectPlace(idx) {
   .then(r => r.json())
   .then(data => {
     if (data.results && data.results[0]) {
-      const full = data.results[0].formatted_address;
-      document.getElementById('site-address').value = full;
+      // Build address from components to guarantee street number is included
+      const comps = data.results[0].address_components;
+      const get = type => (comps.find(c => c.types.includes(type)) || {}).long_name || '';
+      const num    = get('street_number');
+      const road   = get('route');
+      const suburb = get('locality') || get('sublocality');
+      const state  = get('administrative_area_level_1');
+      const post   = get('postal_code');
+      const street = [num, road].filter(Boolean).join(' ');
+      const full   = [street, suburb, state, post].filter(Boolean).join(', ');
+      document.getElementById('site-address').value = full || data.results[0].formatted_address;
       status.className = 'geocode-status ok';
       status.textContent = '✓ Address confirmed';
     } else {
-      // Fallback to prediction description if geocode fails
       document.getElementById('site-address').value = prediction.description;
       status.className = 'geocode-status ok';
       status.textContent = '✓ Address selected';
