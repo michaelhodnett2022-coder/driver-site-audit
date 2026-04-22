@@ -947,11 +947,11 @@ const CHECKLIST_QUESTIONS = [
 
   // ── TRUCK ACCESS ──────────────────────────────────────
   { id: 'q5d', text: 'Are there any delivery time window restrictions at this site?', group: 'ACCESS',
-    sub: { id: 'q5d-detail', label: 'Provide delivery window details', placeholder: 'e.g. Deliveries accepted Mon–Fri 6am–2pm only, no weekend access' }, triggerVal: 'YES' },
+    sub: { id: 'q5d-detail', label: 'Provide delivery window details', placeholder: 'e.g. Deliveries accepted Mon–Fri 6am–2pm only, no weekend access' }, triggerVal: 'YES', reverseColor: true },
   { id: 'q6',  text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ACCESS',
     sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES', reverseColor: true },
   { id: 'q2',  text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
-    sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate, 3.8m under boom at weighbridge' }, triggerVal: 'YES' },
+    sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate, 3.8m under boom at weighbridge' }, triggerVal: 'YES', reverseColor: true },
   { id: 'q3',  text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS',
     sub: { id: 'q3-detail', label: 'Provide details', placeholder: 'e.g. Tight turn at weighbridge, reverse required past shed' }, triggerVal: 'NO' },
   { id: 'q4',  text: 'Maximum truck size configuration permitted on site?', group: 'ACCESS',
