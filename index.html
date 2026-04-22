@@ -2032,22 +2032,37 @@ function selectPlace(idx) {
   const dropdown = document.getElementById('places-dropdown');
   const prediction = dropdown._predictions[idx];
   if (!prediction) return;
-  document.getElementById('site-address').value = prediction.description;
   dropdown.style.display = 'none';
-  syncMudmapAddress();
-  // Geocode the selected address to update the map
+
   const GMAPS_KEY = 'AIzaSyBb-EHe4hw-UmY9xFNRDMwbf-A27S2WbPQ';
+  const status = document.getElementById('geocode-status');
+  status.className = 'geocode-status loading';
+  status.textContent = 'Confirming address…';
+
+  // Use place_id geocode to get the full formatted address (includes street number)
   fetch('https://maps.googleapis.com/maps/api/geocode/json?place_id='
     + prediction.place_id + '&key=' + GMAPS_KEY)
   .then(r => r.json())
   .then(data => {
     if (data.results && data.results[0]) {
-      const status = document.getElementById('geocode-status');
+      const full = data.results[0].formatted_address;
+      document.getElementById('site-address').value = full;
       status.className = 'geocode-status ok';
       status.textContent = '✓ Address confirmed';
+    } else {
+      // Fallback to prediction description if geocode fails
+      document.getElementById('site-address').value = prediction.description;
+      status.className = 'geocode-status ok';
+      status.textContent = '✓ Address selected';
     }
+    syncMudmapAddress();
   })
-  .catch(() => {});
+  .catch(() => {
+    document.getElementById('site-address').value = prediction.description;
+    status.className = 'geocode-status ok';
+    status.textContent = '✓ Address selected';
+    syncMudmapAddress();
+  });
 }
 
 function selectNominatim(idx) {
@@ -2055,9 +2070,15 @@ function selectNominatim(idx) {
   const result = dropdown._nominatim[idx];
   if (!result) return;
   const a = result.address || {};
-  const street = [a.house_number, a.road].filter(Boolean).join(' ');
-  const parts = [street || result.display_name.split(',')[0], a.suburb || a.city || a.town || '', a.state || '', a.postcode || ''].filter(Boolean);
-  document.getElementById('site-address').value = parts.join(', ');
+  // Build address preserving house number
+  const houseNum = a.house_number || '';
+  const road     = a.road || '';
+  const street   = [houseNum, road].filter(Boolean).join(' ');
+  const suburb   = a.suburb || a.neighbourhood || a.city || a.town || a.village || '';
+  const state    = a.state || '';
+  const postcode = a.postcode || '';
+  const parts    = [street, suburb, state, postcode].filter(Boolean);
+  document.getElementById('site-address').value = parts.length > 1 ? parts.join(', ') : result.display_name.split(',').slice(0,3).join(',').trim();
   dropdown.style.display = 'none';
   syncMudmapAddress();
   const status = document.getElementById('geocode-status');
