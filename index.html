@@ -546,13 +546,13 @@
     <div class="section-body">
       <div class="field-row full">
         <div class="field-group">
-          <label>Q1 &nbsp; Customer / Site Name</label>
+          <label>Customer / Site Name</label>
           <input type="text" id="site-name" placeholder="e.g. Karratha Mining Hub">
         </div>
       </div>
       <div class="field-row full">
         <div class="field-group">
-          <label>Q2 &nbsp; Site Address or Plus Code</label>
+          <label>Site Address or Plus Code</label>
           <div class="gps-row">
             <div style="flex:1;position:relative;">
               <input type="text" id="site-address" placeholder="Start typing address…" autocomplete="off" oninput="placesAutocomplete(this)">
@@ -567,19 +567,19 @@
       </div>
       <div class="field-row full">
         <div class="field-group">
-          <label>Q3 &nbsp; Audit Date</label>
+          <label>Audit Date</label>
           <input type="date" id="audit-date">
         </div>
       </div>
       <div class="field-row full">
         <div class="field-group">
-          <label>Q4 &nbsp; Driver Name</label>
+          <label>Driver Name</label>
           <input type="text" id="driver-name" placeholder="Full name">
         </div>
       </div>
       <div class="field-row full">
         <div class="field-group">
-          <label>Q5 &nbsp; State</label>
+          <label>State</label>
           <select id="state-select">
             <option value="WA">WA</option>
             <option value="SA">SA</option>
@@ -593,11 +593,11 @@
       </div>
       <div class="field-row">
         <div class="field-group">
-          <label>Q6 &nbsp; Site Contact Name</label>
+          <label>Site Contact Name</label>
           <input type="text" id="site-contact-name" placeholder="e.g. John Smith">
         </div>
         <div class="field-group">
-          <label>Q6b &nbsp; Site Contact Mobile</label>
+          <label>Site Contact Mobile</label>
           <input type="text" id="site-contact-mobile" placeholder="e.g. 0412 000 000">
         </div>
       </div>
@@ -611,7 +611,7 @@
        To add/edit/remove questions, find that array in the
        <script> block — each question has an id, ref, group,
        and text property.
-       Groups: ACCESS (B.1), ENTRY (B.1), SAFETY (B.2), TANK_QA (C.1)
+       Groups: ACCESS, SAFETY
   ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s2">
     <div class="section-header">
@@ -630,7 +630,7 @@
   <div class="section-card" id="section-s3">
     <div class="section-header">
       <span class="section-num">3</span>
-      <span class="section-title">On-Site Storage Tank Audit</span>
+      <span class="section-title">Tank Details</span>
     </div>
     <div class="section-body">
       <!-- Tank Location Description — top of section -->
@@ -733,7 +733,7 @@
         <!-- C1-Q20 -->
         <div class="yn-question">
           <div class="yn-label">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">Q14</span>If access point higher than 2m; is there safe raised platform/rails or secure tether point?
+            If access point higher than 2m; is there safe raised platform/rails or secure tether point?
           </div>
           <div class="yn-btns">
             <button class="yn-btn yes" data-id="q20" data-val="YES" onclick="setYN(this)">YES</button>
@@ -745,7 +745,7 @@
         <!-- C1-Q21 -->
         <div class="yn-question">
           <div class="yn-label">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">Q15</span>Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?
+            Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?
           </div>
           <div class="yn-btns">
             <button class="yn-btn yes" data-id="q21" data-val="YES" onclick="setYN(this)">YES</button>
@@ -756,7 +756,7 @@
         <!-- C1-Q22 -->
         <div class="yn-question" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
           <div class="yn-label">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">Q16</span>Is the Safe Fill Level clearly marked/indicated on the tank?
+            Is the Safe Fill Level clearly marked/indicated on the tank?
           </div>
           <div class="yn-btns">
             <button class="yn-btn yes" data-id="q22" data-val="YES" onclick="setYN(this)">YES</button>
@@ -876,7 +876,7 @@
 
   <!-- ═══════════════════════════════════════════════════════
        SECTION S6 — GENERAL NOTES
-       Fields: S6-F1 General Notes (free text)
+       General Notes
   ═══════════════════════════════════════════════════════ -->
   <div class="section-card" id="section-s6">
     <div class="section-header">
@@ -884,7 +884,7 @@
       <span class="section-title">General Notes</span>
     </div>
     <div class="section-body">
-      <label style="font-family:var(--mono);font-size:10px;color:var(--label);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:6px;">S6-F1 &nbsp; Notes for future drivers</label>
+      <label style="font-family:var(--mono);font-size:10px;color:var(--label);letter-spacing:0.1em;text-transform:uppercase;font-weight:500;display:block;margin-bottom:6px;">Notes for future drivers</label>
       <textarea id="general-notes" placeholder="Any additional notes for future drivers visiting this site…" rows="4"></textarea>
     </div>
   </div>
@@ -924,7 +924,7 @@ const PHOTO_LABELS = [
    Reference system:
      id       — internal JS key (do not change)
      ref      — human reference shown on screen & PDF
-     group    — section grouping (ACCESS / ENTRY / SAFETY / TANK_QA)
+     group    — section grouping (ACCESS / SAFETY)
      text     — question wording (edit freely)
      yna      — true = shows YES / NO / N/A buttons
      sub      — optional conditional follow-up field
@@ -937,39 +937,36 @@ const PHOTO_LABELS = [
 ────────────────────────────────────────────── */
 const CHECKLIST_QUESTIONS = [
 
-  // ── B.1 TRUCK ACCESS ──────────────────────────────────
-  /* Q1  */ { id: 'q2',  ref: 'Q1',  text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
+  // ── TRUCK ACCESS ──────────────────────────────────────
+  { id: 'q6',  text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ACCESS',
+    sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES', reverseColor: true },
+  { id: 'q2',  text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
     sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate, 3.8m under boom at weighbridge' }, triggerVal: 'YES' },
-  /* Q2  */ { id: 'q3',  ref: 'Q2',  text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS',
+  { id: 'q3',  text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS',
     sub: { id: 'q3-detail', label: 'Provide details', placeholder: 'e.g. Tight turn at weighbridge, reverse required past shed' }, triggerVal: 'NO' },
-  /* Q3  */ { id: 'q4',  ref: 'Q3',  text: 'Maximum truck size configuration permitted on site?', group: 'ACCESS',
+  { id: 'q4',  text: 'Maximum truck size configuration permitted on site?', group: 'ACCESS',
     dropdown: ['LV Only', 'Single Trailer', 'B-Double', 'Pocket Road Train', 'Full Road Train'] },
-  /* Q4  */ { id: 'q4b', ref: 'Q4',  text: 'What is the road surface condition from the site entry to the tank fill point?', group: 'ACCESS',
+  { id: 'q4b', text: 'What is the road surface condition from the site entry to the tank fill point?', group: 'ACCESS',
     dropdown: ['Sealed / Bitumen', 'Gravel — Good condition', 'Gravel — Rough / corrugated', 'Dirt / Clay — OK when dry', 'Dirt / Clay — Soft or boggy when wet', 'Mixed'] },
-  /* Q5  */ { id: 'q5c', ref: 'Q5',  text: 'Does GPS navigation reliably direct you to the correct site entry?', group: 'ACCESS',
+  { id: 'q5c', text: 'Does GPS navigation reliably direct you to the correct site entry?', group: 'ACCESS',
     sub: { id: 'q5c-detail', label: 'Landmark / approach directions for future drivers', placeholder: 'e.g. Do not use southern entry — use Great Northern Hwy northbound, turn right at the BP, site entry 200m on left' }, triggerVal: 'NO' },
-  /* Q6  */ { id: 'q5d', ref: 'Q6',  text: 'Are there any delivery time window restrictions at this site?', group: 'ACCESS',
+  { id: 'q5d', text: 'Are there any delivery time window restrictions at this site?', group: 'ACCESS',
     sub: { id: 'q5d-detail', label: 'Provide delivery window details', placeholder: 'e.g. Deliveries accepted Mon–Fri 6am–2pm only, no weekend access' }, triggerVal: 'YES' },
 
-  // ── B.1 ENTRY & GATE ACCESS ───────────────────────────
-  /* Q7  */ { id: 'q6',  ref: 'Q7',  text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ENTRY',
-    sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES', reverseColor: true },
-
-  // ── B.2 SITE SAFETY ───────────────────────────────────
-  /* Q8  */ { id: 'q7',  ref: 'Q8',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
-    sub: { id: 'q7-induct', label: 'What type of induction is required?', placeholder: '' }, triggerVal: 'YES',
+  // ── SITE SAFETY ───────────────────────────────────────
+  { id: 'q7',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
+    sub: { id: 'q7-induct', label: 'What type of induction is required?', placeholder: '' }, triggerVal: 'YES', reverseColor: true,
     multicheck: { id: 'q7-type', options: ['Sign-in book only', 'Online induction required', 'Full site induction (allow extra time)', 'Call ahead required'] } },
-  /* Q9  */ { id: 'q10', ref: 'Q9',  text: 'Is adequate lighting available for early morning or evening deliveries?', group: 'SAFETY',
+  { id: 'q10', text: 'Is adequate lighting available for early morning or evening deliveries?', group: 'SAFETY',
     sub: { id: 'q10-lighting', label: 'What arrangement is needed?', placeholder: 'e.g. Driver must bring own torch, day shift deliveries only (6am–4pm)' }, triggerVal: 'NO' },
-  /* Q10 */ { id: 'q13', ref: 'Q10', text: 'Does this site require PPE beyond standard hi-vis and steel cap boots?', group: 'SAFETY',
-    sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hard hat, safety glasses, fire-retardant clothing' }, triggerVal: 'YES' },
-  /* Q11 */ { id: 'q15', ref: 'Q11', text: 'Is the site contact reliably reachable during deliveries?', group: 'SAFETY',
+  { id: 'q13', text: 'Does this site require PPE beyond standard hi-vis and steel cap boots?', group: 'SAFETY',
+    sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hard hat, safety glasses, fire-retardant clothing' }, triggerVal: 'YES', reverseColor: true },
+  { id: 'q15', text: 'Is the site contact reliably reachable during deliveries?', group: 'SAFETY',
     sub: { id: 'q15-alt', label: 'Who else can be contacted on site?', placeholder: 'e.g. If John unavailable, call site office on 08 9000 0000' }, triggerVal: 'NO' },
-  /* Q12 */ { id: 'q14', ref: 'Q12', text: 'Do you have any concerns about this delivery that the next driver should be aware of?', group: 'SAFETY',
-    sub: { id: 'q14-concerns', label: 'Provide details', placeholder: 'e.g. Narrow entry, low clearance at rear gate, site dogs on property, aggressive geese' }, triggerVal: 'YES' },
+  { id: 'q14', text: 'Do you have any concerns about this delivery that the next driver should be aware of?', group: 'SAFETY',
+    sub: { id: 'q14-concerns', label: 'Provide details', placeholder: 'e.g. Narrow entry, low clearance at rear gate, site dogs on property, aggressive geese' }, triggerVal: 'YES', reverseColor: true },
 
   // ── TANK & FILL POINT CHECKS — rendered directly in S3 section
-  // Q14, Q15, Q16 are rendered directly in S3
 
 ];
 
@@ -1014,10 +1011,9 @@ function buildChecklist() {
   });
 
   const groupLabels = {
-    ACCESS:  'B.1 Truck Access',
-    ENTRY:   'B.1 Entry & Gate Access',
-    SAFETY:  'B.2 Site Safety',
-    TANK_QA: 'C.1 Tank & Fill Point Checks',
+    ACCESS:  'Truck Access',
+    SAFETY:  'Site Safety',
+    TANK_QA: 'Tank & Fill Point Checks',
   };
 
   Object.entries(groups).forEach(([groupKey, questions]) => {
@@ -1033,7 +1029,7 @@ function buildChecklist() {
       // DROPDOWN type
       if (q.dropdown) {
         const opts = q.dropdown.map(o => '<option value="' + o + '">' + o + '</option>').join('');
-        div.innerHTML = '<div class="yn-label"><span class="yn-ref">' + q.ref + '</span>' + q.text + '</div>'
+        div.innerHTML = '<div class="yn-label">' + q.text + '</div>'
           + '<select id="dd-' + q.id + '" style="margin-top:6px;"><option value="">Select…</option>' + opts + '</select>';
         body.appendChild(div);
         return;
@@ -1067,7 +1063,7 @@ function buildChecklist() {
       const yesClass = q.reverseColor ? 'yn-btn no'  : 'yn-btn yes';
       const noClass  = q.reverseColor ? 'yn-btn yes' : 'yn-btn no';
 
-      div.innerHTML = '<div class="yn-label"><span class="yn-ref">' + q.ref + '</span>' + q.text + '</div>'
+      div.innerHTML = '<div class="yn-label">' + q.text + '</div>'
         + '<div class="yn-btns">'
         + '<button class="' + yesClass + '" data-id="' + q.id + '" data-val="YES" onclick="setYN(this)">YES</button>'
         + '<button class="' + noClass  + '" data-id="' + q.id + '" data-val="NO"  onclick="setYN(this)">NO</button>'
@@ -1766,7 +1762,7 @@ async function generatePDF() {
     // ── Section: Checklist
     y = pdfSectionHeader(doc, 'SITE CHECKLIST', y, M, CW);
 
-    const groupLabels = { ACCESS:'🚛 Truck Access', ENTRY:'Entry & Hours', SAFETY:'Site Safety', TANK:'Tank & Fill Point', CONTACT:'Site Contact' };
+    const groupLabels = { ACCESS:'Truck Access', SAFETY:'Site Safety' };
     let lastGroup = null;
 
     data.checklist.forEach(item => {
