@@ -30,6 +30,7 @@
 <!-- html2canvas + jsPDF for PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <style>
   /* ═══════════════════════════════════════
@@ -898,7 +899,7 @@
 
   <!-- GENERATE PDF -->
   <button class="btn-generate" id="btn-pdf" onclick="generatePDF()">
-    ⬇ Generate Site Report PDF
+    ⬇ Generate &amp; Send Report
   </button>
 
 </div><!-- /main -->
@@ -1904,13 +1905,42 @@ async function generatePDF() {
       doc.text(`Page ${p} of ${pageCount}`, PW - M, PH - 3, { align: 'right' });
     }
 
-    // Save
+    // Save to device
     const safeName = (data.siteName || 'site').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
     const dateStr  = data.date ? data.date.replace(/-/g, '') : 'undated';
-    doc.save(`bioblue-driver-audit-${safeName}-${dateStr}.pdf`);
+    const fileName = `bioblue-driver-audit-${safeName}-${dateStr}.pdf`;
+    doc.save(fileName);
 
-    hideSpinner();
-    btn.disabled = false;
+    // Send via EmailJS
+    showSpinner('SENDING EMAIL…');
+    try {
+      const pdfBase64 = doc.output('datauristring'); // base64 data URI
+      const subject   = `Driver Site Audit — ${data.siteName || 'Unknown Site'} — ${data.date || 'Undated'}`;
+
+      await emailjs.send(
+        'service_f0s6xv5',
+        'template_55pubeo',
+        {
+          to_email:     'michael.hodnett@bioblue.com.au',
+          subject:      subject,
+          site_name:    data.siteName  || '—',
+          site_address: data.address   || '—',
+          audit_date:   data.date      || '—',
+          driver_name:  data.driver    || '—',
+          state:        data.state     || '—',
+          pdf_name:     fileName,
+          pdf_data:     pdfBase64,
+        }
+      );
+      hideSpinner();
+      btn.disabled = false;
+      showToast('✅ PDF saved & emailed to BioBlue');
+    } catch (emailErr) {
+      console.warn('Email failed:', emailErr);
+      hideSpinner();
+      btn.disabled = false;
+      showToast('⚠️ PDF saved to device — email failed. Check connection.');
+    }
 
   } catch (err) {
     console.error('PDF error:', err);
@@ -2025,6 +2055,24 @@ function showSpinner(msg) {
 }
 function hideSpinner() {
   document.getElementById('spinner').classList.remove('active');
+}
+
+function showToast(msg) {
+  let toast = document.getElementById('toast-msg');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast-msg';
+    toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:white;padding:12px 22px;border-radius:30px;font-family:var(--mono);font-size:12px;letter-spacing:0.06em;opacity:0;transition:all 0.3s;z-index:9999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 3500);
 }
 
 function setLevelIndicator(val) {
@@ -2266,6 +2314,9 @@ function syncMudmapAddress() {
    INIT — called on DOM ready
 ══════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  // Init EmailJS
+  emailjs.init('VOzIE82-mIbrEcuPK');
+
   initClock();
   initDates();
   buildChecklist();
