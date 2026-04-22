@@ -641,18 +641,22 @@
 
       <div class="field-row">
         <div class="field-group">
-          <label>Tank Type <span style="font-size:9px;color:var(--muted);font-weight:400;">(select all that apply)</span></label>
-          <div id="tank-type-boxes" style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
-            <label class="cb-item"><input type="checkbox" name="tank-type" value="Poly Slim"> Poly Slim</label>
-            <label class="cb-item"><input type="checkbox" name="tank-type" value="Poly Round"> Poly Round</label>
-            <label class="cb-item"><input type="checkbox" name="tank-type" value="In Ground"> In Ground</label>
-            <label class="cb-item"><input type="checkbox" name="tank-type" value="Cabinet Type"> Cabinet Type</label>
-            <label class="cb-item"><input type="checkbox" name="tank-type" value="Onsite IBC"> Onsite IBC</label>
+          <label>Tank Type</label>
+          <select id="tank-type" onchange="toggleTankTypeOther(this.value)" style="margin-bottom:0;">
+            <option value="">Select…</option>
+            <option>Poly Slim</option>
+            <option>Poly Round</option>
+            <option>In Ground</option>
+            <option>Cabinet Type</option>
+            <option>Other</option>
+          </select>
+          <div id="tank-type-other-wrap" style="display:none;margin-top:8px;">
+            <input type="text" id="tank-type-other" placeholder="e.g. Onsite IBC, Stainless vessel…">
           </div>
         </div>
         <div class="field-group">
           <label>Tank Size</label>
-          <select id="tank-size">
+          <select id="tank-size" onchange="toggleOther(this,'tank-size-other-wrap')">
             <option value="">Select…</option>
             <option>2,500L</option>
             <option>5,000L</option>
@@ -662,6 +666,9 @@
             <option>22,800L</option>
             <option>Other</option>
           </select>
+          <div id="tank-size-other-wrap" style="display:none;margin-top:8px;">
+            <input type="text" id="tank-size-other" placeholder="e.g. 15,000L, 50,000L…">
+          </div>
         </div>
       </div>
       <div class="field-row">
@@ -671,7 +678,7 @@
         </div>
         <div class="field-group">
           <label>Fill Point Connection Type</label>
-          <select id="fill-type">
+          <select id="fill-type" onchange="toggleOther(this,'fill-type-other-wrap')">
             <option value="">Select…</option>
             <option>2" Camlock</option>
             <option>2" Dry Break</option>
@@ -679,6 +686,9 @@
             <option>3" Dry Break</option>
             <option>Other</option>
           </select>
+          <div id="fill-type-other-wrap" style="display:none;margin-top:8px;">
+            <input type="text" id="fill-type-other" placeholder="e.g. Storz, BSP thread…">
+          </div>
         </div>
       </div>
 
@@ -1963,8 +1973,12 @@ function collectData() {
     return { text: q.text, ref: q.ref, group: q.group, answer, subAnswer, subLabel: q.sub ? q.sub.label : null };
   });
 
-  // Tank type — gather all checked boxes
-  const tankTypeChecked = Array.from(document.querySelectorAll('input[name="tank-type"]:checked')).map(c => c.value);
+  // Resolve dropdown values — if "Other" selected, append the typed text
+  function resolveOther(selectId, otherId) {
+    const val   = document.getElementById(selectId).value;
+    const other = document.getElementById(otherId)?.value.trim();
+    return val === 'Other' && other ? 'Other — ' + other : val;
+  }
 
   return {
     siteName:          document.getElementById('site-name').value.trim(),
@@ -1974,7 +1988,10 @@ function collectData() {
     state:             document.getElementById('state-select').value,
     siteContactName:   document.getElementById('site-contact-name').value.trim(),
     siteContactMobile: document.getElementById('site-contact-mobile').value.trim(),
-    tankType:          tankTypeChecked.join(', ') || '—',
+    tankType:          resolveOther('tank-type', 'tank-type-other'),
+    tankSize:          resolveOther('tank-size', 'tank-size-other'),
+    tankSafeFill:      document.getElementById('tank-safe-fill').value.trim(),
+    fillType:          resolveOther('fill-type', 'fill-type-other'),
     tankSize:          document.getElementById('tank-size').value,
     tankSafeFill:      document.getElementById('tank-safe-fill').value.trim(),
     fillType:          document.getElementById('fill-type').value,
@@ -2019,6 +2036,20 @@ function setFillLock(val) {
   document.getElementById('filllock-no').classList.toggle('active',  val === 'NO');
   document.getElementById('filllock-detail-wrap').style.display = val === 'YES' ? 'block' : 'none';
   if (val === 'NO') document.getElementById('filllock-detail').value = '';
+}
+
+function toggleTankTypeOther(val) {
+  toggleOther({ value: val }, 'tank-type-other-wrap');
+  if (val !== 'Other') document.getElementById('tank-type-other').value = '';
+}
+
+function toggleOther(selectEl, wrapperId) {
+  const wrap = document.getElementById(wrapperId);
+  if (!wrap) return;
+  wrap.style.display = selectEl.value === 'Other' ? 'block' : 'none';
+  // Clear the text field when hidden
+  const input = wrap.querySelector('input');
+  if (input && selectEl.value !== 'Other') input.value = '';
 }
 
 /* ══════════════════════════════════════════════
