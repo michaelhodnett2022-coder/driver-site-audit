@@ -945,6 +945,8 @@ const PHOTO_LABELS = [
 const CHECKLIST_QUESTIONS = [
 
   // ── TRUCK ACCESS ──────────────────────────────────────
+  { id: 'q5d', text: 'Are there any delivery time window restrictions at this site?', group: 'ACCESS',
+    sub: { id: 'q5d-detail', label: 'Provide delivery window details', placeholder: 'e.g. Deliveries accepted Mon–Fri 6am–2pm only, no weekend access' }, triggerVal: 'YES' },
   { id: 'q6',  text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ACCESS',
     sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES', reverseColor: true },
   { id: 'q2',  text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
@@ -955,8 +957,6 @@ const CHECKLIST_QUESTIONS = [
     dropdown: ['LV Only', 'Single Trailer', 'B-Double', 'Pocket Road Train', 'Full Road Train'] },
   { id: 'q4b', text: 'What is the road surface condition from the site entry to the tank fill point?', group: 'ACCESS',
     dropdown: ['Sealed / Bitumen', 'Gravel — Good condition', 'Gravel — Rough / corrugated', 'Dirt / Clay — OK when dry', 'Dirt / Clay — Soft or boggy when wet', 'Mixed'] },
-  { id: 'q5d', text: 'Are there any delivery time window restrictions at this site?', group: 'ACCESS',
-    sub: { id: 'q5d-detail', label: 'Provide delivery window details', placeholder: 'e.g. Deliveries accepted Mon–Fri 6am–2pm only, no weekend access' }, triggerVal: 'YES' },
   { id: 'q5c', text: 'Does GPS navigation reliably direct you to the correct site entry?', group: 'ACCESS',
     sub: { id: 'q5c-detail', label: 'Landmark / approach directions for future drivers', placeholder: 'e.g. Do not use southern entry — use Great Northern Hwy northbound, turn right at the BP, site entry 200m on left' }, triggerVal: 'NO' },
 
