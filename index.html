@@ -674,7 +674,7 @@
         <!-- C1-Q20 -->
         <div class="yn-question">
           <div class="yn-label">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">C1-Q20</span>If access point higher than 2m; is there safe raised platform/rails or secure tether point?
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">Q14</span>If access point higher than 2m; is there safe raised platform/rails or secure tether point?
           </div>
           <div class="yn-btns">
             <button class="yn-btn yes" data-id="q20" data-val="YES" onclick="setYN(this)">YES</button>
@@ -686,7 +686,7 @@
         <!-- C1-Q21 -->
         <div class="yn-question">
           <div class="yn-label">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">C1-Q21</span>Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">Q15</span>Are fill points correctly labelled for AdBlue® and with tank number (if applicable)?
           </div>
           <div class="yn-btns">
             <button class="yn-btn yes" data-id="q21" data-val="YES" onclick="setYN(this)">YES</button>
@@ -697,7 +697,7 @@
         <!-- C1-Q22 -->
         <div class="yn-question" style="border-bottom:none;margin-bottom:0;padding-bottom:0;">
           <div class="yn-label">
-            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">C1-Q22</span>Is the Safe Fill Level clearly marked/indicated on the tank?
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:600;margin-right:6px;letter-spacing:0.05em;">Q16</span>Is the Safe Fill Level clearly marked/indicated on the tank?
           </div>
           <div class="yn-btns">
             <button class="yn-btn yes" data-id="q22" data-val="YES" onclick="setYN(this)">YES</button>
@@ -879,34 +879,40 @@ const PHOTO_LABELS = [
 const CHECKLIST_QUESTIONS = [
 
   // ── B.1 TRUCK ACCESS ──────────────────────────────────
-  /* B1-Q1 */ { id: 'q1', ref: 'B1-Q1', text: 'Is truck access to/from the customer site free of obstruction?', group: 'ACCESS' },
-  /* B1-Q2 */ { id: 'q2', ref: 'B1-Q2', text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
-    sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate' }, triggerVal: 'YES' },
-  /* B1-Q3 */ { id: 'q3', ref: 'B1-Q3', text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS',
+  /* Q1  */ { id: 'q2',  ref: 'Q1',  text: 'Are there any truck height restrictions at this site? (e.g. entry, on site or exit ways)', group: 'ACCESS',
+    sub: { id: 'q2-detail', label: 'Provide details', placeholder: 'e.g. 4.2m clearance at main gate, 3.8m under boom at weighbridge' }, triggerVal: 'YES' },
+  /* Q2  */ { id: 'q3',  ref: 'Q2',  text: 'Is there adequate room within site to manoeuvre vehicle safely?', group: 'ACCESS',
     sub: { id: 'q3-detail', label: 'Provide details', placeholder: 'e.g. Tight turn at weighbridge, reverse required past shed' }, triggerVal: 'NO' },
-  /* B1-Q4 — dropdown, not YES/NO */
-  /* B1-Q4 */ { id: 'q4', ref: 'B1-Q4', text: 'Maximum truck size configuration permitted on site?', group: 'ACCESS',
+  /* Q3  */ { id: 'q4',  ref: 'Q3',  text: 'Maximum truck size configuration permitted on site?', group: 'ACCESS',
     dropdown: ['LV Only', 'Single Trailer', 'B-Double', 'Pocket Road Train', 'Full Road Train'] },
-  /* B1-Q4b */ { id: 'q4b', ref: 'B1-Q4b', text: 'What is the road surface condition on the route to the tank?', group: 'ACCESS',
+  /* Q4  */ { id: 'q4b', ref: 'Q4',  text: 'What is the road surface condition from the site entry to the tank fill point?', group: 'ACCESS',
     dropdown: ['Sealed / Bitumen', 'Gravel — Good condition', 'Gravel — Rough / corrugated', 'Dirt / Clay — OK when dry', 'Dirt / Clay — Soft or boggy when wet', 'Mixed'] },
-  /* B1-Q5c */ { id: 'q5c', ref: 'B1-Q5c', text: 'Does GPS navigation reliably direct you to the correct site entry?', group: 'ACCESS',
+  /* Q5  */ { id: 'q5c', ref: 'Q5',  text: 'Does GPS navigation reliably direct you to the correct site entry?', group: 'ACCESS',
     sub: { id: 'q5c-detail', label: 'Landmark / approach directions for future drivers', placeholder: 'e.g. Do not use southern entry — use Great Northern Hwy northbound, turn right at the BP, site entry 200m on left' }, triggerVal: 'NO' },
+  /* Q6  */ { id: 'q5d', ref: 'Q6',  text: 'Are there any delivery time window restrictions at this site?', group: 'ACCESS',
+    sub: { id: 'q5d-detail', label: 'Provide delivery window details', placeholder: 'e.g. Deliveries accepted Mon–Fri 6am–2pm only, no weekend access' }, triggerVal: 'YES' },
 
   // ── B.1 ENTRY & GATE ACCESS ───────────────────────────
-  /* B1-Q6 */ { id: 'q6', ref: 'B1-Q6', text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ENTRY',
+  /* Q7  */ { id: 'q6',  ref: 'Q7',  text: 'Are any gate codes, swipe access, or key arrangements required?', group: 'ENTRY',
     sub: { id: 'q6-detail', label: 'Provide details', placeholder: 'e.g. PIN 1234, call John on 0400 000 000' }, triggerVal: 'YES' },
+  /* Q8  */ { id: 'q7b', ref: 'Q8',  text: 'Is there a weighbridge or security checkpoint the driver must pass through?', group: 'ENTRY',
+    sub: { id: 'q7b-detail', label: 'Provide details', placeholder: 'e.g. Weigh in and out at gatehouse, report to security with delivery docket' }, triggerVal: 'YES' },
 
   // ── B.2 SITE SAFETY ───────────────────────────────────
-  /* B2-Q7  */ { id: 'q7',  ref: 'B2-Q7',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
-    sub: { id: 'q7-induct', label: 'Provide details', placeholder: 'e.g. Sign in at site office, ask for site supervisor' }, triggerVal: 'YES' },
-  /* B2-Q10 */ { id: 'q10', ref: 'B2-Q10', text: 'Is adequate lighting provided for early morning or evening deliveries?', group: 'SAFETY' },
-  /* B2-Q13 */ { id: 'q13', ref: 'B2-Q13', text: 'Are there any site-specific Personal Protective Equipment (PPE) requirements?', group: 'SAFETY',
-    sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hi-vis, steel caps, hard hat' }, triggerVal: 'YES' },
-  /* B2-Q14 */ { id: 'q14', ref: 'B2-Q14', text: 'Do you have any concerns about this delivery that the next driver should be aware of?', group: 'SAFETY',
-    sub: { id: 'q14-concerns', label: 'Provide details', placeholder: 'e.g. Narrow entry, low clearance at rear gate, site dogs on property' }, triggerVal: 'YES' },
+  /* Q9  */ { id: 'q7',  ref: 'Q9',  text: 'Is a site-specific induction or sign-in process required?', group: 'SAFETY',
+    sub: { id: 'q7-induct', label: 'What type of induction is required?', placeholder: '' }, triggerVal: 'YES',
+    dropdown2: { id: 'q7-type', parentId: 'q7', options: ['Sign-in book only', 'Online induction required', 'Full site induction (allow extra time)', 'Call ahead required'] } },
+  /* Q10 */ { id: 'q10', ref: 'Q10', text: 'Is adequate lighting available for early morning or evening deliveries?', group: 'SAFETY',
+    sub: { id: 'q10-lighting', label: 'What arrangement is needed?', placeholder: 'e.g. Driver must bring own torch, day shift deliveries only (6am–4pm)' }, triggerVal: 'NO' },
+  /* Q11 */ { id: 'q13', ref: 'Q11', text: 'Does this site require PPE beyond standard hi-vis and steel cap boots?', group: 'SAFETY',
+    sub: { id: 'q13-ppe', label: 'Provide details', placeholder: 'e.g. Hard hat, safety glasses, fire-retardant clothing' }, triggerVal: 'YES' },
+  /* Q12 */ { id: 'q15', ref: 'Q12', text: 'Is the site contact reliably reachable during deliveries?', group: 'SAFETY',
+    sub: { id: 'q15-alt', label: 'Who else can be contacted on site?', placeholder: 'e.g. If John unavailable, call site office on 08 9000 0000' }, triggerVal: 'NO' },
+  /* Q13 */ { id: 'q14', ref: 'Q13', text: 'Do you have any concerns about this delivery that the next driver should be aware of?', group: 'SAFETY',
+    sub: { id: 'q14-concerns', label: 'Provide details', placeholder: 'e.g. Narrow entry, low clearance at rear gate, site dogs on property, aggressive geese' }, triggerVal: 'YES' },
 
-  // ── C.1 TANK & FILL POINT CHECKS — moved to S2 section
-  // C1-Q20, C1-Q21, C1-Q22 are rendered directly in S2 (above the checklist)
+  // ── C.1 TANK & FILL POINT CHECKS — rendered directly in S3 section
+  // C1-Q20, C1-Q21, C1-Q22 are rendered directly in S3 (above the checklist)
 
 ];
 
@@ -983,9 +989,16 @@ function buildChecklist() {
 
       let subHtml = '';
       if (q.sub) {
+        // Check if there's a secondary dropdown inside the sub field
+        const innerDropdown = q.dropdown2
+          ? '<div class="field-group" style="margin-top:8px;"><label>Type</label><select id="' + q.dropdown2.id + '"><option value="">Select\u2026</option>'
+            + q.dropdown2.options.map(o => '<option>' + o + '</option>').join('') + '</select></div>'
+          : '';
         subHtml = '<div class="yn-sub" id="sub-' + q.id + '" style="display:none;">'
           + '<div class="field-group"><label>' + q.sub.label + '</label>'
-          + '<input type="text" id="' + q.sub.id + '" placeholder="' + (q.sub.placeholder || '') + '"></div></div>';
+          + (q.sub.placeholder ? '<input type="text" id="' + q.sub.id + '" placeholder="' + q.sub.placeholder + '">' : '')
+          + innerDropdown
+          + '</div></div>';
       }
 
       div.innerHTML = '<div class="yn-label"><span class="yn-ref">' + q.ref + '</span>' + q.text + '</div>'
@@ -1871,16 +1884,25 @@ function collectData() {
   const checklist = CHECKLIST_QUESTIONS.map(q => {
     // Dropdown question
     if (q.dropdown) {
-      const el = document.getElementById(`dd-${q.id}`);
+      const el = document.getElementById('dd-' + q.id);
       return { text: q.text, ref: q.ref, group: q.group, answer: el ? el.value || '—' : '—', subAnswer: null, subLabel: null };
     }
     // YES/NO/NA question
-    const activeBtn = document.querySelector(`.yn-btn.active[data-id="${q.id}"]`);
+    const activeBtn = document.querySelector('.yn-btn.active[data-id="' + q.id + '"]');
     const answer = activeBtn ? activeBtn.dataset.val : null;
     let subAnswer = null;
     if (q.sub) {
-      const subEl = document.getElementById(q.sub.id);
-      if (subEl) subAnswer = subEl.value.trim() || null;
+      // Text sub-field
+      if (q.sub.placeholder) {
+        const subEl = document.getElementById(q.sub.id);
+        if (subEl) subAnswer = subEl.value.trim() || null;
+      }
+      // dropdown2 (e.g. induction type)
+      if (q.dropdown2) {
+        const ddEl = document.getElementById(q.dropdown2.id);
+        const ddVal = ddEl ? ddEl.value.trim() : null;
+        subAnswer = [subAnswer, ddVal].filter(Boolean).join(' — ') || null;
+      }
     }
     return { text: q.text, ref: q.ref, group: q.group, answer, subAnswer, subLabel: q.sub ? q.sub.label : null };
   });
