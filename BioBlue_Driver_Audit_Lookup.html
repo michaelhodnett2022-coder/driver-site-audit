@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioBlue Driver Audit Lookup</title>
+<style>
+  :root{
+    --navy:#0D1B2A; --blue:#1A9FD4; --hover:#0D7FB5; --tint:#E8F6FC;
+    --green:#16A34A; --red:#DC2626;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Barlow',Arial,sans-serif; background:var(--tint); color:var(--navy);
+    margin:0; padding:0; min-height:100vh;
+  }
+  .wrap{ max-width:480px; margin:0 auto; padding:20px 16px 60px; }
+  h1{
+    font-family:'Barlow Condensed',Arial,sans-serif; text-transform:uppercase;
+    letter-spacing:.5px; font-size:22px; color:var(--navy); margin:18px 0 4px;
+  }
+  .sub{ font-size:13px; color:#3a4a5a; margin-bottom:20px; }
+
+  /* PIN gate */
+  #gate{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:100vh; padding:24px; text-align:center;
+  }
+  #gate h1{ margin-top:0; }
+  #pinInput{
+    font-family:'JetBrains Mono',monospace; font-size:22px; letter-spacing:6px;
+    text-align:center; width:200px; padding:12px; border:2px solid var(--blue);
+    border-radius:10px; margin:16px 0 10px; color:var(--navy);
+  }
+  #pinInput:focus{ outline:none; border-color:var(--hover); }
+  #pinError{ color:var(--red); font-size:13px; min-height:18px; margin-bottom:10px; }
+  #gateBtn{
+    font-family:inherit; font-weight:700; font-size:15px; border:none;
+    border-radius:8px; padding:12px 28px; cursor:pointer; color:#fff; background:var(--blue);
+  }
+  #gateBtn:hover{ background:var(--hover); }
+
+  /* Search UI */
+  #app{ display:none; }
+  #searchBox{
+    width:100%; font-size:16px; padding:12px 14px; border:2px solid var(--blue);
+    border-radius:10px; font-family:'Barlow',Arial,sans-serif; margin-bottom:16px;
+  }
+  #searchBox:focus{ outline:none; border-color:var(--hover); }
+  #status{ font-size:13px; color:#3a4a5a; margin-bottom:10px; }
+
+  .card{
+    background:#fff; border-radius:10px; border-left:4px solid var(--blue);
+    padding:14px 16px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  .site-name{ font-weight:700; font-size:16px; color:var(--navy); margin-bottom:2px; }
+  .site-meta{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:#5b6b7a; margin-bottom:10px;
+  }
+  .view-btn{
+    display:inline-block; font-weight:700; font-size:14px; color:#fff; background:var(--blue);
+    text-decoration:none; padding:9px 16px; border-radius:8px;
+  }
+  .view-btn:hover{ background:var(--hover); }
+
+  #empty, #loadErr{ text-align:center; color:#5b6b7a; font-size:14px; margin-top:30px; padding:0 10px; }
+  #loadErr{ color:var(--red); }
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="gate">
+  <h1>BioBlue Driver Audit Lookup</h1>
+  <div class="sub">Enter the access code to continue</div>
+  <input type="tel" inputmode="numeric" id="pinInput" placeholder="••••" maxlength="8" autofocus>
+  <div id="pinError"></div>
+  <button id="gateBtn" onclick="checkPin()">Enter</button>
+</div>
+
+<!-- SEARCH APP -->
+<div id="app">
+  <div class="wrap">
+    <h1>Driver Audit Lookup</h1>
+    <div class="sub">Search by site name or suburb to find the current site audit.</div>
+    <input type="text" id="searchBox" placeholder="Type a site name or suburb…" oninput="renderResults()">
+    <div id="status">Loading site list…</div>
+    <div id="results"></div>
+    <div id="empty" style="display:none;">No matching sites found. Try a different site name or suburb, or check with the office.</div>
+    <div id="loadErr" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+  // =====================================================================
+  // CONFIG — fill these in before deploying:
+  //   DRIVE_API_KEY      → a Google Cloud API key, restricted to the Drive
+  //                         API only, with HTTP referrer restricted to this
+  //                         page's exact GitHub Pages URL. Do not reuse the
+  //                         Maps API key — keep this one separate and
+  //                         scoped as tightly as possible.
+  //   DRIVER_INDEX_FILE_ID → the Drive file ID of Driver_Audit_Index.json
+  //                         (open it in Drive, the ID is the long string in
+  //                         the URL after /d/). Find it in
+  //                         ADMIN DATA - DO NOT REMOVE inside BioBlue Audits.
+  //   DRIVER_PIN          → whatever shared access code you want drivers to use.
+  // =====================================================================
+  const DRIVE_API_KEY        = 'AIzaSyB2nBcqtZ7RY3y8dX2cEscBooQbMgKrGUw';
+  const DRIVER_INDEX_FILE_ID = '13zOqUeLFAwKB2YH5uM2m9XCItxIkOVGz';
+  const DRIVER_PIN           = '2026';
+
+  let siteList = [];
+
+  function checkPin() {
+    const entered = document.getElementById('pinInput').value.trim();
+    if (entered === DRIVER_PIN) {
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadIndex();
+    } else {
+      document.getElementById('pinError').textContent = 'Incorrect code — try again.';
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinInput').focus();
+    }
+  }
+  document.getElementById('pinInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPin();
+  });
+
+  async function loadIndex() {
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${DRIVER_INDEX_FILE_ID}?alt=media&key=${DRIVE_API_KEY}`
+      );
+      if (!res.ok) throw new Error(`Could not load site list (${res.status})`);
+      siteList = await res.json();
+      if (!Array.isArray(siteList)) throw new Error('Site list came back in an unexpected format');
+      document.getElementById('status').textContent =
+        `${siteList.length} sites available. Start typing to search.`;
+      renderResults();
+    } catch (e) {
+      document.getElementById('status').style.display = 'none';
+      const err = document.getElementById('loadErr');
+      err.style.display = 'block';
+      err.textContent = '⚠️ Could not load the site list right now (' + e.message + '). Please check with the office.';
+      console.error(e);
+    }
+  }
+
+  function renderResults() {
+    const q = document.getElementById('searchBox').value.trim().toLowerCase();
+    const resultsEl = document.getElementById('results');
+    const emptyEl = document.getElementById('empty');
+    resultsEl.innerHTML = '';
+
+    if (!q) { emptyEl.style.display = 'none'; return; }
+
+    const matches = siteList.filter(s =>
+      (s.siteName || '').toLowerCase().includes(q) ||
+      (s.suburb   || '').toLowerCase().includes(q) ||
+      (s.state    || '').toLowerCase().includes(q)
+    ).sort((a,b) => (a.siteName||'').localeCompare(b.siteName||''));
+
+    if (!matches.length) { emptyEl.style.display = 'block'; return; }
+    emptyEl.style.display = 'none';
+
+    for (const s of matches) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const meta = [s.suburb, s.state].filter(Boolean).join(', ') || 'Suburb/state not recorded';
+      const dateStr = s.auditDate ? `Last audited: ${s.auditDate}` : 'Audit date not recorded';
+      card.innerHTML = `
+        <div class="site-name">${escapeHtml(s.siteName || 'Unnamed site')}</div>
+        <div class="site-meta">${escapeHtml(meta)} &nbsp;•&nbsp; ${escapeHtml(dateStr)}</div>
+        <a class="view-btn" href="${s.pdfLink}" target="_blank" rel="noopener">View Audit PDF</a>
+      `;
+      resultsEl.appendChild(card);
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[m]));
+  }
+</script>
+</body>
+</html>
