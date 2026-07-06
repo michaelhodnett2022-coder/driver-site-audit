@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioBlue — Driver Audit Index Backfill (one-off utility)</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root{
+    --navy:#0D1B2A; --blue:#1A9FD4; --hover:#0D7FB5; --tint:#E8F6FC;
+    --green:#16A34A; --red:#DC2626; --purple:#7C3AED; --amber:#B45309;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Barlow',Arial,sans-serif; background:var(--tint); color:var(--navy);
+    margin:0; padding:20px; max-width:760px; margin-inline:auto; line-height:1.5;
+  }
+  h1{
+    font-family:'Barlow Condensed',Arial,sans-serif; text-transform:uppercase;
+    letter-spacing:.5px; color:var(--navy); border-left:4px solid var(--blue);
+    padding-left:12px; margin-bottom:4px;
+  }
+  .warn{
+    background:#FFF7ED; border:1px solid var(--amber); color:#7C2D12;
+    border-radius:8px; padding:12px 14px; font-size:14px; margin-bottom:20px;
+  }
+  .card{
+    background:#fff; border-radius:10px; padding:18px 20px; margin-bottom:16px;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  button{
+    font-family:inherit; font-weight:700; font-size:14px; border:none;
+    border-radius:8px; padding:12px 20px; cursor:pointer; color:#fff;
+    background:var(--blue); transition:background .15s;
+  }
+  button:hover{ background:var(--hover); }
+  button:disabled{ background:#94a3b8; cursor:not-allowed; }
+  #log{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; background:var(--navy);
+    color:#d7f4ff; border-radius:8px; padding:14px; height:420px; overflow-y:auto;
+    white-space:pre-wrap; margin-top:16px;
+  }
+  .row-ok{ color:#7CFCA3; }
+  .row-skip{ color:#FBBF77; }
+  .row-err{ color:#FF8A8A; }
+  #summary{ font-weight:700; margin-top:14px; }
+  #summary span{ display:inline-block; margin-right:18px; }
+</style>
+</head>
+<body>
+
+<h1>Driver Audit Index — Backfill</h1>
+<div class="warn">
+  <strong>One-off utility, not part of the live form suite.</strong><br>
+  This walks every existing client folder under "BioBlue Audits", finds each site's <em>current</em> Audit PDF,
+  shares it read-only ("anyone with the link"), and writes one entry per site into the Driver Audit Index.
+  It never touches pricing, contacts, or any other document — only Audit PDFs and the index file.
+  Safe to re-run: it upserts one live row per site, it won't create duplicates.
+</div>
+
+<div class="card">
+  <button id="authBtn" onclick="startBackfill()">Sign in with Google & Run Backfill</button>
+  <div id="summary"></div>
+</div>
+
+<div id="log">Waiting to start…</div>
+
+<script>
+const GDRIVE_CLIENT_ID   = '49055725643-mlnqu8l92vmau83rnrk8imupiqvs03t1.apps.googleusercontent.com';
+const GDRIVE_FOLDER_NAME = 'BioBlue Audits';
+const NON_CLIENT_FOLDERS = ['ADMIN DATA - DO NOT REMOVE', 'Excel'];
+const DRIVER_INDEX_FILENAME = 'Driver_Audit_Index.json';
+
+let gdriveToken = null;
+
+function log(msg, cls) {
+  const line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = msg;
+  document.getElementById('log').appendChild(line);
+  document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+}
+
+async function ensureAuth() {
+  if (gdriveToken) return;
+  await new Promise((resolve, reject) => {
+    if (typeof google === 'undefined' || !google?.accounts?.oauth2) {
+      reject(new Error('Google API not loaded — check internet connection and reload the page'));
+      return;
+    }
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: GDRIVE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      callback: (response) => {
+        if (response && response.access_token) { gdriveToken = response.access_token; resolve(); }
+        else reject(new Error(response?.error || 'Sign-in failed or was cancelled'));
+      },
+      error_callback: (err) => reject(new Error(err?.message || 'Google sign-in popup was blocked or failed'))
+    });
+    client.requestAccessToken({ prompt: '' });
+  });
+}
+
+async function driveGet(url) {
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${gdriveToken}` } });
+  if (!res.ok) throw new Error(`Drive API error ${res.status}`);
+  return res.json();
+}
+
+// Read-only folder lookup — returns null if not found, never creates.
+async function findFolder(name, parentId) {
+  const d = await driveGet(
+    `https://www.googleapis.com/drive/v3/files?q=name='${name.replace(/'/g,"\\'")}' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id)`
+  );
+  return (d.files && d.files.length) ? d.files[0].id : null;
+}
+
+// List all subfolders directly under a parent (paginated).
+async function listSubfolders(parentId) {
+  let all = [], pageToken = '';
+  do {
+    const d = await driveGet(
+      `https://www.googleapis.com/drive/v3/files?q='${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=nextPageToken,files(id,name)&pageSize=200${pageToken ? '&pageToken='+pageToken : ''}`
+    );
+    all = all.concat(d.files || []);
+    pageToken = d.nextPageToken || '';
+  } while (pageToken);
+  return all;
+}
+
+// Find files by name-contains within a folder, newest first.
+async function findFilesContaining(fragment, parentId) {
+  const d = await driveGet(
+    `https://www.googleapis.com/drive/v3/files?q=name contains '${fragment}' and '${parentId}' in parents and trashed=false&fields=files(id,name,modifiedTime)&orderBy=modifiedTime desc&pageSize=10`
+  );
+  return d.files || [];
+}
+
+async function readJsonFile(fileId) {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+    { headers: { Authorization: `Bearer ${gdriveToken}` } });
+  if (!res.ok) throw new Error(`JSON read failed (${res.status})`);
+  return JSON.parse(await res.text());
+}
+
+async function sharePdfPublicly(fileId) {
+  const listData = await driveGet(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions?fields=permissions(id,type,role)`);
+  const already = (listData.permissions || []).some(p => p.type === 'anyone' && p.role === 'reader');
+  if (already) return;
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${gdriveToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role: 'reader', type: 'anyone' })
+  });
+  if (!res.ok) throw new Error(`Sharing failed (${res.status})`);
+}
+
+let _driverIndexFileIdCache = null;
+async function getDriverIndexFileId(rootFolderId) {
+  if (_driverIndexFileIdCache) return _driverIndexFileIdCache;
+  let adminFolderId = await findFolder('ADMIN DATA - DO NOT REMOVE', rootFolderId);
+  if (!adminFolderId) {
+    const cr = await fetch('https://www.googleapis.com/drive/v3/files', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${gdriveToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'ADMIN DATA - DO NOT REMOVE', mimeType: 'application/vnd.google-apps.folder', parents: [rootFolderId] })
+    });
+    adminFolderId = (await cr.json()).id;
+  }
+  const sd = await driveGet(
+    `https://www.googleapis.com/drive/v3/files?q=name='${DRIVER_INDEX_FILENAME}' and '${adminFolderId}' in parents and trashed=false&fields=files(id)`
+  );
+  if (sd.files && sd.files.length) { _driverIndexFileIdCache = sd.files[0].id; return _driverIndexFileIdCache; }
+
+  const blob = new Blob([JSON.stringify([])], { type: 'application/json' });
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify({ name: DRIVER_INDEX_FILENAME, parents: [adminFolderId] })], { type: 'application/json' }));
+  form.append('file', blob, DRIVER_INDEX_FILENAME);
+  const up = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+    { method: 'POST', headers: { Authorization: `Bearer ${gdriveToken}` }, body: form });
+  const newId = (await up.json()).id;
+  await fetch(`https://www.googleapis.com/drive/v3/files/${newId}/permissions`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${gdriveToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role: 'reader', type: 'anyone' })
+  }).catch(e => console.warn('Driver index sharing setup failed (non-fatal):', e.message));
+  _driverIndexFileIdCache = newId;
+  return _driverIndexFileIdCache;
+}
+
+// One live row per site, keyed on Drive folder ID. Safe to re-run.
+async function upsertDriverIndexEntry(rootFolderId, entry) {
+  const fileId = await getDriverIndexFileId(rootFolderId);
+  let list = [];
+  try {
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+      { headers: { Authorization: `Bearer ${gdriveToken}` } });
+    if (res.ok) {
+      const text = await res.text();
+      list = text ? JSON.parse(text) : [];
+      if (!Array.isArray(list)) list = [];
+    }
+  } catch(e) { list = []; }
+
+  const idx = list.findIndex(e => e.driveFolderId === entry.driveFolderId);
+  if (idx >= 0) list[idx] = entry; else list.push(entry);
+
+  const blob = new Blob([JSON.stringify(list)], { type: 'application/json' });
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify({})], { type: 'application/json' }));
+  form.append('file', blob, DRIVER_INDEX_FILENAME);
+  const up = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart&fields=id`,
+    { method: 'PATCH', headers: { Authorization: `Bearer ${gdriveToken}` }, body: form });
+  if (!up.ok) throw new Error(`Index write failed (${up.status})`);
+}
+
+async function startBackfill() {
+  const btn = document.getElementById('authBtn');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('summary').textContent = '';
+
+  try {
+    log('Signing in to Google Drive…');
+    await ensureAuth();
+
+    log('Finding "BioBlue Audits" root folder…');
+    const rootRes = await driveGet(
+      `https://www.googleapis.com/drive/v3/files?q=name='${GDRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id)`
+    );
+    if (!rootRes.files || !rootRes.files.length) throw new Error('"BioBlue Audits" root folder not found');
+    const rootFolderId = rootRes.files[0].id;
+
+    log('Listing client folders…');
+    const allFolders = await listSubfolders(rootFolderId);
+    const clientFolders = allFolders.filter(f => !NON_CLIENT_FOLDERS.includes(f.name));
+    log(`Found ${clientFolders.length} client folders (excluding admin/system folders).\n`);
+
+    let shared = 0, updated = 0, skipped = 0, errored = 0;
+
+    for (const folder of clientFolders) {
+      try {
+        // Find the current Audit PDF for this client — read-only, never creates.
+        const pdfs = await findFilesContaining('.Audit.pdf', folder.id);
+        if (!pdfs.length) {
+          log(`— ${folder.name}: no audit PDF found, skipping`, 'row-skip');
+          skipped++;
+          continue;
+        }
+        const pdfFile = pdfs[0]; // newest if more than one somehow exists
+
+        // Find the matching JSON snapshot — new structure first, old flat structure as fallback.
+        let jsonFile = null;
+        const dataFolderId = await findFolder('Data', folder.id);
+        if (dataFolderId) {
+          const bulkAuditDataId = await findFolder('Bulk Audit Data', dataFolderId);
+          if (bulkAuditDataId) {
+            const jsons = await findFilesContaining('_data.json', bulkAuditDataId);
+            if (jsons.length) jsonFile = jsons[0];
+          }
+        }
+        if (!jsonFile) {
+          const oldAuditDataId = await findFolder('Audit Data', folder.id);
+          if (oldAuditDataId) {
+            const jsons = await findFilesContaining('_data.json', oldAuditDataId);
+            if (jsons.length) jsonFile = jsons[0];
+          }
+        }
+
+        let siteName = folder.name, suburb = '', state = '', auditDate = '';
+        if (jsonFile) {
+          const d = await readJsonFile(jsonFile.id);
+          siteName  = d.generatedSiteName || d.siteName || d.customerName || folder.name;
+          suburb    = d.suburb || '';
+          state     = d.state || '';
+          auditDate = d.auditDate || '';
+        } else {
+          log(`  (no JSON snapshot found for ${folder.name} — using folder name only, suburb/state left blank)`, 'row-skip');
+        }
+
+        await sharePdfPublicly(pdfFile.id);
+        shared++;
+
+        await upsertDriverIndexEntry(rootFolderId, {
+          driveFolderId: folder.id,
+          clientId: '',
+          siteName, suburb, state, auditDate,
+          pdfFileId: pdfFile.id,
+          pdfLink: `https://drive.google.com/file/d/${pdfFile.id}/view`,
+          loggedAt: new Date().toISOString()
+        });
+        updated++;
+        log(`✓ ${siteName} (${suburb || '—'}, ${state || '—'}) — shared & indexed`, 'row-ok');
+
+      } catch(folderErr) {
+        errored++;
+        log(`✗ ${folder.name}: ${folderErr.message}`, 'row-err');
+      }
+    }
+
+    document.getElementById('summary').innerHTML =
+      `<span style="color:var(--green)">Indexed: ${updated}</span>` +
+      `<span style="color:var(--amber)">Skipped (no PDF): ${skipped}</span>` +
+      `<span style="color:var(--red)">Errors: ${errored}</span>`;
+    log(`\nDone. ${updated} sites indexed, ${skipped} skipped, ${errored} errors.`);
+
+  } catch(e) {
+    log('FATAL: ' + e.message, 'row-err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Re-run Backfill';
+  }
+}
+</script>
+</body>
+</html>
